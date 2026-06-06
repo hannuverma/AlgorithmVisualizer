@@ -18,7 +18,7 @@ export const ControlPanel: React.FC = () => {
   const hasData = timeline.length > 0;
 
   return (
-    <div className="w-full bg-slate-900 border border-slate-800 rounded-xl p-4 flex flex-col md:flex-row items-center justify-between gap-4">
+    <div className="glass-card w-full p-4 flex flex-col md:flex-row items-center justify-between gap-4">
       {/* Playback Primary Buttons */}
       <div className="flex items-center gap-2">
         <button

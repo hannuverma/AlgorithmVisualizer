@@ -39,12 +39,12 @@ export const ComplexityChart: React.FC = () => {
   }
 
   return (
-    <div className="w-full bg-slate-900 border border-slate-800 rounded-xl p-4 shadow-2xl flex flex-col gap-2">
-      <h3 className="text-xs font-mono font-bold text-slate-400 uppercase tracking-wider">
-        Operational Complexity Telemetry
-      </h3>
+    <div className="glass-card w-full p-6 flex flex-col min-h-[400px]">
+      <div className="mb-5 pb-3 border-b border-slate-800/50 flex justify-between items-center">
+        <h2 className="text-[18px] font-semibold tracking-tight">Complexity Telemetry</h2>
+      </div>
       
-      <div className="h-56 w-full">
+      <div className="h-56 w-full mb-4">
         <ResponsiveContainer width="100%" height="100%">
           <LineChart data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
             <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" />
@@ -54,12 +54,11 @@ export const ComplexityChart: React.FC = () => {
               contentStyle={{ backgroundColor: '#020617', borderColor: '#334155', borderRadius: '8px' }}
               labelStyle={{ color: '#94a3b8', fontFamily: 'monospace', fontSize: '11px' }}
             />
-            <Legend wrapperStyle={{ fontSize: '10px', fontFamily: 'monospace', paddingTop: '10px' }} />
             
             {/* Theoretical Boundary Lines */}
-            <Line type="monotone" dataKey="bestCase" stroke="#10b981" strokeDasharray="5 5" dot={false} name="Best: O(N)" strokeWidth={1.5} />
-            <Line type="monotone" dataKey="averageCase" stroke="#f59e0b" strokeDasharray="3 3" dot={false} name="Avg: O(N²)" strokeWidth={1.5} />
             <Line type="monotone" dataKey="worstCase" stroke="#ef4444" strokeDasharray="5 5" dot={false} name="Worst: O(N²)" strokeWidth={1.5} />
+            <Line type="monotone" dataKey="averageCase" stroke="#94a3b8" strokeDasharray="3 3" dot={false} name="Avg: O(N log N)" strokeWidth={1.5} />
+            <Line type="monotone" dataKey="bestCase" stroke="#10b981" strokeDasharray="5 5" dot={false} name="Best: O(N)" strokeWidth={1.5} />
             
             {/* Live Active Case Execution Tracker Line */}
             <Line 
@@ -69,11 +68,18 @@ export const ComplexityChart: React.FC = () => {
               dot={false} 
               strokeWidth={3} 
               name="Current Run"
-              activeDot={{ r: 6 }}
-              className="animate-pulse"
+              activeDot={{ r: 6, fill: "#fff" }}
+              className="animate-pulse drop-shadow-[0_0_6px_rgba(59,130,246,0.8)]"
             />
           </LineChart>
         </ResponsiveContainer>
+      </div>
+
+      <div className="flex flex-col gap-2 pt-2">
+        <div className="flex justify-between items-center text-[10px] font-mono text-slate-400"><div className="flex items-center gap-2"><div className="w-2 h-2 bg-rose-500 rounded-sm"></div> Worst Case O(N²)</div> <span>Quadratic</span></div>
+        <div className="flex justify-between items-center text-[10px] font-mono text-slate-400"><div className="flex items-center gap-2"><div className="w-2 h-2 bg-slate-400 rounded-sm"></div> Average O(N log N)</div> <span>Linearithmic</span></div>
+        <div className="flex justify-between items-center text-[10px] font-mono text-slate-400"><div className="flex items-center gap-2"><div className="w-2 h-2 bg-emerald-500 rounded-sm"></div> Best Case O(N)</div> <span>Linear</span></div>
+        <div className="flex justify-between items-center text-[11px] font-mono text-slate-200 mt-2 pt-2 border-t border-slate-800"><div className="flex items-center gap-2"><div className="w-2 h-0.5 bg-blue-500 shadow-[0_0_4px_rgba(59,130,246,0.8)] rounded-sm"></div> Current Run</div> <span className="font-bold">{currentOpsCount} Ops</span></div>
       </div>
     </div>
   );

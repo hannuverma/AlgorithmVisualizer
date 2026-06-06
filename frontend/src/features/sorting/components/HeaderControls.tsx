@@ -41,43 +41,63 @@ export const HeaderControls: React.FC = () => {
   };
 
   return (
-    <div className="w-full bg-slate-900 border border-slate-800 rounded-xl p-5 flex flex-wrap items-end justify-between gap-4 shadow-xl relative">
-      <div className="flex flex-wrap items-start gap-4">
-        {/* Algorithm Selector */}
-        <div className="flex flex-col gap-1">
-          <label className="text-xs font-mono text-slate-400">Algorithm</label>
-          <select
-            value={selectedAlgo}
-            onChange={(e) => setSelectedAlgo(e.target.value)}
-            disabled={isLoading}
-            className="h-9 bg-slate-950 text-slate-200 border border-slate-800 rounded-lg px-3 py-1 text-sm font-medium focus:outline-none focus:border-blue-500 disabled:opacity-50"
-          >
-            <option value="bubble-sort">Bubble Sort</option>
-            <option value="insertion-sort">Insertion Sort</option>
-            <option value="quick-sort">Quick Sort</option>
-            <option value="selection-sort">Selection Sort</option>
-          </select>
+    <header className="glass-nav sticky top-0 z-50">
+      <div className="max-w-[1400px] mx-auto px-4 sm:px-8 py-2 flex flex-col lg:flex-row items-center justify-between gap-4">
+        
+        {/* Logo Area */}
+        <div className="flex items-center gap-4 w-full lg:w-auto justify-between lg:justify-start">
+          <div className="font-sans text-base font-semibold tracking-tight flex items-center gap-2">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--color-accent-blue)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+              <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+              <line x1="12" y1="22.08" x2="12" y2="12"></line>
+            </svg>
+            Arch Visualizer Core
+          </div>
         </div>
 
-        {/* Input Mode Selector */}
-        <div className="flex flex-col gap-1">
-          <label className="text-xs font-mono text-slate-400">Input Mode</label>
-          <select
-            value={inputType}
-            onChange={(e) => setInputType(e.target.value as 'random' | 'custom')}
-            disabled={isLoading}
-            className="h-9 bg-slate-950 text-slate-200 border border-slate-800 rounded-lg px-3 py-1 text-sm font-medium focus:outline-none focus:border-blue-500 disabled:opacity-50"
-          >
-            <option value="random">Random</option>
-            <option value="custom">Custom</option>
-          </select>
+        {/* Segmented Control Tabs */}
+        <div className="hidden lg:flex bg-black/30 border border-slate-800/80 rounded-lg p-1">
+          <button className="bg-[#16191f] text-slate-100 shadow-[0_1px_3px_rgba(0,0,0,0.5)] border border-slate-700/50 px-4 py-1.5 text-[13px] font-medium rounded transition-all">Sorting Engines</button>
+          <button className="text-slate-400 hover:text-slate-200 px-4 py-1.5 text-[13px] font-medium rounded transition-all">Network Graphs</button>
+          <button className="text-slate-400 hover:text-slate-200 px-4 py-1.5 text-[13px] font-medium rounded transition-all">Tree Structures</button>
+          <button className="text-slate-400 hover:text-slate-200 px-4 py-1.5 text-[13px] font-medium rounded transition-all">Telemetry Hub</button>
         </div>
 
-        {/* Array Configuration */}
-        {inputType === 'random' ? (
-          <div className="flex flex-col gap-1">
-            <label className="text-xs font-mono text-slate-400">Size ({arraySize})</label>
-            <div className="flex items-center h-9 w-32">
+        {/* Controls Area */}
+        <div className="flex flex-wrap items-center gap-4 lg:gap-6 w-full lg:w-auto justify-between lg:justify-end">
+          
+          <div className="flex items-center gap-2">
+            <span className="font-mono text-[11px] text-slate-400 uppercase tracking-wider">Algorithm</span>
+            <select
+              value={selectedAlgo}
+              onChange={(e) => setSelectedAlgo(e.target.value)}
+              disabled={isLoading}
+              className="bg-[#0f1115] text-slate-100 border border-slate-800 rounded px-3 py-1 text-[13px] font-mono focus:outline-none focus:border-blue-500 disabled:opacity-50"
+            >
+              <option value="bubble-sort">Bubble Sort</option>
+              <option value="insertion-sort">Insertion Sort</option>
+              <option value="quick-sort">Quick Sort</option>
+              <option value="selection-sort">Selection Sort</option>
+            </select>
+          </div>
+
+          <div className="flex items-center gap-2">
+             <span className="font-mono text-[11px] text-slate-400 uppercase tracking-wider">Mode</span>
+             <select
+              value={inputType}
+              onChange={(e) => setInputType(e.target.value as 'random' | 'custom')}
+              disabled={isLoading}
+              className="bg-[#0f1115] text-slate-100 border border-slate-800 rounded px-3 py-1 text-[13px] font-mono focus:outline-none focus:border-blue-500 disabled:opacity-50"
+            >
+              <option value="random">Random</option>
+              <option value="custom">Custom</option>
+            </select>
+          </div>
+
+          {inputType === 'random' ? (
+            <div className="flex items-center gap-2">
+              <span className="font-mono text-[11px] text-slate-400 uppercase tracking-wider">Size ({arraySize})</span>
               <input
                 type="range"
                 min="5"
@@ -86,41 +106,40 @@ export const HeaderControls: React.FC = () => {
                 value={arraySize}
                 onChange={(e) => setArraySize(Number(e.target.value))}
                 disabled={isLoading}
-                className="w-full h-1.5 bg-slate-800 rounded-lg appearance-none cursor-pointer border border-slate-700/50 focus:outline-none focus:ring-2 focus:ring-blue-500/40 [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:bg-blue-500 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:shadow-[0_0_10px_rgba(59,130,246,0.8)] [&::-webkit-slider-thumb]:hover:bg-blue-400 [&::-webkit-slider-thumb]:hover:scale-110 [&::-webkit-slider-thumb]:transition-all [&::-moz-range-thumb]:w-4 [&::-moz-range-thumb]:h-4 [&::-moz-range-thumb]:bg-blue-500 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:border-none [&::-moz-range-thumb]:shadow-[0_0_10px_rgba(59,130,246,0.8)] [&::-moz-range-thumb]:hover:bg-blue-400 [&::-moz-range-thumb]:hover:scale-110 [&::-moz-range-thumb]:transition-all"
+                className="w-20 h-1 bg-slate-800 rounded-full appearance-none cursor-pointer focus:outline-none [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-3 [&::-webkit-slider-thumb]:h-3 [&::-webkit-slider-thumb]:bg-blue-500 [&::-webkit-slider-thumb]:rounded-full"
               />
             </div>
-          </div>
-        ) : (
-          <div className="flex flex-col gap-1 relative">
-            <label className="text-xs font-mono text-slate-400">Custom Array (comma separated)</label>
-            <input
-              type="text"
-              value={customArrayStr}
-              onChange={(e) => {
-                setCustomArrayStr(e.target.value);
-                setInputError(null);
-              }}
-              disabled={isLoading}
-              placeholder="e.g. 10, 5, 20, 8"
-              className={`h-9 bg-slate-950 text-slate-200 border ${inputError ? 'border-rose-500' : 'border-slate-800'} rounded-lg px-3 py-1 text-sm font-mono focus:outline-none focus:border-blue-500 disabled:opacity-50 w-48 sm:w-64`}
-            />
-            {inputError && (
-              <span className="absolute -bottom-5 left-0 text-[10px] text-rose-500 font-mono whitespace-nowrap">
-                {inputError}
-              </span>
-            )}
-          </div>
-        )}
-      </div>
+          ) : (
+            <div className="flex items-center gap-2 relative">
+              <span className="font-mono text-[11px] text-slate-400 uppercase tracking-wider">Array</span>
+              <input
+                type="text"
+                value={customArrayStr}
+                onChange={(e) => {
+                  setCustomArrayStr(e.target.value);
+                  setInputError(null);
+                }}
+                disabled={isLoading}
+                placeholder="10, 5, 20"
+                className={`w-32 bg-[#0f1115] text-slate-100 border ${inputError ? 'border-rose-500' : 'border-slate-800'} rounded px-2 py-1 text-[13px] font-mono focus:outline-none focus:border-blue-500 disabled:opacity-50`}
+              />
+              {inputError && (
+                <span className="absolute -bottom-4 left-10 text-[10px] text-rose-500 font-mono whitespace-nowrap">
+                  {inputError}
+                </span>
+              )}
+            </div>
+          )}
 
-      {/* Primary Action Button */}
-      <button
-        onClick={handleGenerateArray}
-        disabled={isLoading}
-        className="px-5 h-9 bg-blue-600 hover:bg-blue-500 text-white font-semibold rounded-lg text-sm shadow-md shadow-blue-900/30 active:scale-95 transition-all disabled:opacity-50 disabled:pointer-events-none self-end"
-      >
-        {isLoading ? 'Computing...' : 'Generate & Sync Data'}
-      </button>
-    </div>
+          <button
+            onClick={handleGenerateArray}
+            disabled={isLoading}
+            className="px-4 py-1.5 bg-blue-600 hover:bg-blue-500 text-white font-medium rounded text-[13px] shadow-[0_0_12px_rgba(59,130,246,0.4)] active:scale-95 transition-all disabled:opacity-50 flex items-center justify-center gap-2"
+          >
+            {isLoading ? 'Computing...' : 'Generate & Sync Data'}
+          </button>
+        </div>
+      </div>
+    </header>
   );
 };
