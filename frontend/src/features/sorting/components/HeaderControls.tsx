@@ -10,7 +10,7 @@ export const HeaderControls: React.FC = () => {
   const [customArrayStr, setCustomArrayStr] = useState('15, 8, 25, 4, 30');
   const [inputError, setInputError] = useState<string | null>(null);
 
-  const handleGenerateArray = () => {
+  const handleGenerateArray = (algoToUse: string = selectedAlgo) => {
     setInputError(null);
     let newArray: number[] = [];
 
@@ -37,7 +37,7 @@ export const HeaderControls: React.FC = () => {
     }
     
     // Pass the raw array to the backend to get the timeline execution sequence
-    generateSortingTimeline(selectedAlgo, newArray);
+    generateSortingTimeline(algoToUse, newArray);
   };
 
   return (
@@ -71,7 +71,11 @@ export const HeaderControls: React.FC = () => {
             <span className="font-mono text-[11px] text-slate-400 uppercase tracking-wider">Algorithm</span>
             <select
               value={selectedAlgo}
-              onChange={(e) => setSelectedAlgo(e.target.value)}
+              onChange={(e) => {
+                const newAlgo = e.target.value;
+                setSelectedAlgo(newAlgo);
+                handleGenerateArray(newAlgo);
+              }}
               disabled={isLoading}
               className="bg-[#0f1115] text-slate-100 border border-slate-800 rounded px-3 py-1 text-[13px] font-mono focus:outline-none focus:border-blue-500 disabled:opacity-50"
             >
@@ -132,7 +136,7 @@ export const HeaderControls: React.FC = () => {
           )}
 
           <button
-            onClick={handleGenerateArray}
+            onClick={() => handleGenerateArray()}
             disabled={isLoading}
             className="px-4 py-1.5 bg-blue-600 hover:bg-blue-500 text-white font-medium rounded text-[13px] shadow-[0_0_12px_rgba(59,130,246,0.4)] active:scale-95 transition-all disabled:opacity-50 flex items-center justify-center gap-2"
           >

@@ -20,7 +20,7 @@ interface VisualizerState{
     isLoading: boolean;
     error: string | null;
     currentOpsCount: number;
-    
+    algorithm: string;
 
     generateSortingTimeline: (algorithm: string, array: number[]) => Promise<void>;
 
@@ -37,6 +37,7 @@ interface VisualizerState{
 
 export const useVisualizerStore = create<VisualizerState>((set) => ({
     timeline: [],
+    algorithm: 'bubble-sort',
     currentStepIndex: 0,
     isPlaying: false,
     playbackSpeed: 100,
@@ -56,6 +57,7 @@ export const useVisualizerStore = create<VisualizerState>((set) => ({
         
             set({ 
             timeline: response.data.timeline, 
+            algorithm: algorithm,
             isLoading: false 
             });
         } catch (err: any) {

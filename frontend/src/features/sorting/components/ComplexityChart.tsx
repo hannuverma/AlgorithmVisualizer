@@ -4,7 +4,7 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Responsi
 import { useVisualizerStore } from '../../../store/useVisualizerStore';
 
 export const ComplexityChart: React.FC = () => {
-  const { timeline, currentStepIndex, currentOpsCount } = useVisualizerStore();
+  const { timeline, currentStepIndex, currentOpsCount, algorithm } = useVisualizerStore();
 
   const n = timeline.length > 0 ? timeline[0].array.length : 0;
 
@@ -16,12 +16,30 @@ export const ComplexityChart: React.FC = () => {
     
     // We sample points across the scale of N to draw smooth curves
     for (let i = 1; i <= n; i++) {
+      let bestCase = 0;
+      let averageCase = 0;
+      let worstCase = 0;
+
+      if (algorithm === 'quick-sort') {
+        bestCase = i * Math.log2(i);
+        averageCase = i * Math.log2(i) * 1.5;
+        worstCase = Math.pow(i, 2);
+      } else if (algorithm === 'selection-sort') {
+        bestCase = Math.pow(i, 2) * 0.5;
+        averageCase = Math.pow(i, 2) * 0.75;
+        worstCase = Math.pow(i, 2);
+      } else {
+        // bubble-sort, insertion-sort
+        bestCase = i;
+        averageCase = Math.pow(i, 2) * 0.5;
+        worstCase = Math.pow(i, 2);
+      }
+
       data.push({
         name: `N=${i}`,
-        bestCase: i,              // O(N) - Linear
-        averageCase: Math.pow(i, 2) * 0.5, // O(N^2) Scaled down slightly for visual balance
-        worstCase: Math.pow(i, 2),  // O(N^2) - Quadratic
-        // The current case line only renders up to where our active pointer is running
+        bestCase,
+        averageCase,
+        worstCase,
         currentCase: i <= Math.ceil((currentStepIndex / timeline.length) * n) ? currentOpsCount : null
       });
     }
@@ -56,9 +74,9 @@ export const ComplexityChart: React.FC = () => {
             />
             
             {/* Theoretical Boundary Lines */}
-            <Line type="monotone" dataKey="worstCase" stroke="#ef4444" strokeDasharray="5 5" dot={false} name="Worst: O(N²)" strokeWidth={1.5} />
-            <Line type="monotone" dataKey="averageCase" stroke="#94a3b8" strokeDasharray="3 3" dot={false} name="Avg: O(N log N)" strokeWidth={1.5} />
-            <Line type="monotone" dataKey="bestCase" stroke="#10b981" strokeDasharray="5 5" dot={false} name="Best: O(N)" strokeWidth={1.5} />
+            <Line type="monotone" dataKey="worstCase" stroke="#ef4444" strokeDasharray="5 5" dot={false} name="Worst Case" strokeWidth={1.5} />
+            <Line type="monotone" dataKey="averageCase" stroke="#94a3b8" strokeDasharray="3 3" dot={false} name="Average Case" strokeWidth={1.5} />
+            <Line type="monotone" dataKey="bestCase" stroke="#10b981" strokeDasharray="5 5" dot={false} name="Best Case" strokeWidth={1.5} />
             
             {/* Live Active Case Execution Tracker Line */}
             <Line 
@@ -77,8 +95,18 @@ export const ComplexityChart: React.FC = () => {
 
       <div className="flex flex-col gap-2 pt-2">
         <div className="flex justify-between items-center text-[10px] font-mono text-slate-400"><div className="flex items-center gap-2"><div className="w-2 h-2 bg-rose-500 rounded-sm"></div> Worst Case O(N²)</div> <span>Quadratic</span></div>
-        <div className="flex justify-between items-center text-[10px] font-mono text-slate-400"><div className="flex items-center gap-2"><div className="w-2 h-2 bg-slate-400 rounded-sm"></div> Average O(N log N)</div> <span>Linearithmic</span></div>
-        <div className="flex justify-between items-center text-[10px] font-mono text-slate-400"><div className="flex items-center gap-2"><div className="w-2 h-2 bg-emerald-500 rounded-sm"></div> Best Case O(N)</div> <span>Linear</span></div>
+        <div className="flex justify-between items-center text-[10px] font-mono text-slate-400">
+          <div className="flex items-center gap-2">
+            <div className="w-2 h-2 bg-slate-400 rounded-sm"></div> Average {algorithm === 'quick-sort' ? 'O(N log N)' : 'O(N²)'}
+          </div> 
+          <span>{algorithm === 'quick-sort' ? 'Linearithmic' : 'Quadratic'}</span>
+        </div>
+        <div className="flex justify-between items-center text-[10px] font-mono text-slate-400">
+          <div className="flex items-center gap-2">
+            <div className="w-2 h-2 bg-emerald-500 rounded-sm"></div> Best Case {algorithm === 'quick-sort' ? 'O(N log N)' : algorithm === 'selection-sort' ? 'O(N²)' : 'O(N)'}
+          </div> 
+          <span>{algorithm === 'quick-sort' ? 'Linearithmic' : algorithm === 'selection-sort' ? 'Quadratic' : 'Linear'}</span>
+        </div>
         <div className="flex justify-between items-center text-[11px] font-mono text-slate-200 mt-2 pt-2 border-t border-slate-800"><div className="flex items-center gap-2"><div className="w-2 h-0.5 bg-blue-500 shadow-[0_0_4px_rgba(59,130,246,0.8)] rounded-sm"></div> Current Run</div> <span className="font-bold">{currentOpsCount} Ops</span></div>
       </div>
     </div>
