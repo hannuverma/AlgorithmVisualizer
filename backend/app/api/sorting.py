@@ -47,3 +47,18 @@ def run_quick_sort(payload: SortingRequest):
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"An error occurred executing the algorithm engine: {str(e)}"
         )
+
+@router.post("/selection-sort", response_model=SortingResponse, status_code=status.HTTP_200_OK)
+def run_selection_sort(payload: SortingRequest):
+    try:
+        timeline = SortingEngine.selection_sort(payload.array)
+        return SortingResponse(
+            algorithm="selection_sort",
+            total_steps=len(timeline),
+            timeline=timeline
+        )
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"An error occurred executing the algorithm engine: {str(e)}"
+        )

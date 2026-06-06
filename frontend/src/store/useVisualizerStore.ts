@@ -19,9 +19,12 @@ interface VisualizerState{
     playbackSpeed: number;
     isLoading: boolean;
     error: string | null;
+    currentOpsCount: number;
+    
 
     generateSortingTimeline: (algorithm: string, array: number[]) => Promise<void>;
 
+    setCurrentOpsCount: (count: number) => void;
     setCurrentStepIndex: (index: number) => void;
     setIsPlaying: (isPlaying: boolean) => void;
     setPlaybackSpeed: (speed: number) => void;
@@ -39,6 +42,7 @@ export const useVisualizerStore = create<VisualizerState>((set) => ({
     playbackSpeed: 100,
     isLoading: false,
     error: null,
+    currentOpsCount: 0,
 
     generateSortingTimeline: async (algorithm: string, array: number[]) => {
 
@@ -62,7 +66,7 @@ export const useVisualizerStore = create<VisualizerState>((set) => ({
             });
         }
     },
-
+    setCurrentOpsCount: (currentOpsCount) => set({ currentOpsCount }),
     setCurrentStepIndex: (currentStepIndex) => set({ currentStepIndex }),
     setIsPlaying: (isPlaying) => set({ isPlaying }),
     setPlaybackSpeed: (playbackSpeed) => set({ playbackSpeed }),
@@ -75,5 +79,5 @@ export const useVisualizerStore = create<VisualizerState>((set) => ({
     currentStepIndex: Math.max(state.currentStepIndex - 1, 0)
     })),
 
-    resetPlayback: () => set({ currentStepIndex: 0, isPlaying: false })
+    resetPlayback: () => set({ currentStepIndex: 0, isPlaying: false, currentOpsCount: 0 })
 }));

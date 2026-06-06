@@ -55,6 +55,17 @@ export const BarChart: React.FC = () => {
             barColor = 'bg-rose-500 shadow-[0_0_15px_rgba(244,63,94,0.6)] scale-105 z-10'; // Active mutation
           } else if (isHighlighted) {
             barColor = 'bg-amber-400 shadow-[0_0_12px_rgba(251,191,36,0.5)] z-10'; // Selection/Comparison
+            if (currentStep.action_description.includes("Verifying")) {
+                // If we are in the victory loop phase, paint everything verified green!
+                barColor = 'bg-emerald-400 shadow-[0_0_15px_rgba(52,211,153,0.6)]';
+            } else {
+                // Standard sorting comparison color
+                barColor = 'bg-amber-400 shadow-[0_0_12px_rgba(251,191,36,0.5)]';
+            }
+          }
+          if (isSwapped && !currentStep.action_description.includes("Verifying")) {
+            // Standard sorting active swap color
+            barColor = 'bg-rose-500 shadow-[0_0_15px_rgba(244,63,94,0.6)] scale-105';
           }
 
           const elementDepth = currentStep.depths ? currentStep.depths[idx] : 0;

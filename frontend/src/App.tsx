@@ -5,6 +5,7 @@ import { BarChart } from './features/sorting/components/BarChart';
 import { ControlPanel } from './features/sorting/components/ControlPanel';
 import { useVisualizerStore } from './store/useVisualizerStore';
 import { useSortingPlayback } from './features/sorting/hooks/useSortingPlayback';
+import { ComplexityChart } from './features/sorting/components/ComplexityChart';
 
 export const App: React.FC = () => {
   const { error, isLoading, timeline } = useVisualizerStore();
@@ -34,7 +35,17 @@ export const App: React.FC = () => {
 
         {/* Central Analytics Bar Canvas Visual Board */}
         <div className="relative">
-          <BarChart />
+          <div className="grid grid-col-1 lg:grid-cols-3 gap-6 items-start">
+            {/* Left 2 Columns hold the main sorting canvas visualizer */}
+            <div className="lg:col-span-2">
+              <BarChart />
+            </div>
+
+            {/* Right Column holds your advanced real-time telemetry card */}
+            <div className="lg:col-span-1">
+              <ComplexityChart />
+            </div>
+          </div>
           {isLoading && (
             <div className="absolute inset-0 bg-slate-950/70 backdrop-blur-xs rounded-xl flex items-center justify-center border border-slate-800">
               <div className="flex flex-col items-center gap-3">

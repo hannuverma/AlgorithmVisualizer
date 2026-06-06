@@ -10,11 +10,14 @@ class SortingEngine:
         arr = initial_array
         n = len(arr)
 
+        sorted_indices = []
+
         timeline.append(
             SortingStep(
                 array = arr.copy(),
                 highlighted_indices=[],
                 swapped_indices=[],
+                sorted_indices=sorted_indices.copy(),
                 action_description="Initialized unsorted array. Preparing to start Bubble Sort."
                 )
         )
@@ -28,6 +31,7 @@ class SortingEngine:
                         array = arr.copy(),
                         highlighted_indices=[j, j+1],
                         swapped_indices=[],
+                        sorted_indices=sorted_indices.copy(),
                         action_description=f"Comparing elements at index {j} ({arr[j]}) and index {j+1} ({arr[j+1]})"
                     )
                 )
@@ -41,9 +45,14 @@ class SortingEngine:
                             array=arr.copy(),
                             highlighted_indices=[j, j + 1],
                             swapped_indices=[j, j + 1],
+                            sorted_indices=sorted_indices.copy(),
                             action_description=f"Swapped {arr[j]} and {arr[j+1]} because {arr[j]} > {arr[j+1]}"
                         )
                     )
+
+                
+            sorted_indices.append(n - i - 1)
+
             
             if not swapped:
                 break
@@ -54,6 +63,7 @@ class SortingEngine:
                 array = arr.copy(),
                 highlighted_indices=[],
                 swapped_indices=[],
+                sorted_indices=sorted_indices.copy(),
                 action_description="Bubble sort complete."
             )
         )
@@ -207,4 +217,70 @@ class SortingEngine:
         return timeline
 
         
-                
+    @staticmethod
+    def selection_sort(initial_array: List[int]) -> List[SortingStep]:
+
+        timeline: List[SortingStep] = []
+        arr = initial_array.copy()
+        n = len(arr)
+        sorted_indices = []
+        timeline.append(
+            SortingStep(
+                array = arr.copy(),
+                highlighted_indices=[],
+                swapped_indices=[],
+                sorted_indices=[],
+                action_description="Initialized unsorted array. Preparing to start selection sort."
+            )
+        )
+
+        for i in range(n):
+            minIndx = i
+
+            for j in range(i + 1, n):
+                timeline.append(
+                    SortingStep(
+                        array=arr.copy(),
+                        highlighted_indices=[i,minIndx,j],
+                        swapped_indices=[],
+                        sorted_indices=sorted_indices.copy(),
+                        action_description=f"Comparing element at index {i} with element at index {j}. If element at {j} is smaller than element at {i}, swap them."
+                    )
+                )
+                if arr[j] < arr[minIndx]:
+                    minIndx = j
+                    timeline.append(
+                        SortingStep(
+                            array=arr.copy(),
+                            highlighted_indices=[i,minIndx,j],
+                            swapped_indices=[],
+                            sorted_indices=sorted_indices.copy(),
+                            action_description=f"Found a new minimum element at index {j}"
+                        )
+                    )
+            
+            arr[i], arr[minIndx] = arr[minIndx], arr[i]
+
+            timeline.append(
+                SortingStep(
+                    array=arr.copy(),
+                    highlighted_indices=[i, minIndx],
+                    swapped_indices=[i, minIndx],
+                    sorted_indices=sorted_indices.copy(),
+                    action_description=f"Swapped element at index {i} with element at index {minIndx} because {arr[j]} < {arr[minIndx]}"
+                )
+            )
+            sorted_indices.append(i)
+
+        
+
+        timeline.append(
+            SortingStep(
+                array=arr.copy(),
+                highlighted_indices=[],
+                swapped_indices=[],
+                action_description="Algorithm finished. Array is completely sorted."
+            )
+        )
+
+        return timeline

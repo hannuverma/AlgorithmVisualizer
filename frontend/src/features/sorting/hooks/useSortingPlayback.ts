@@ -12,7 +12,8 @@ export const useSortingPlayback = () =>{
         setIsPlaying,
         nextStep,
         setCurrentStepIndex,
-        setTimeline
+        setTimeline,
+        setCurrentOpsCount
     } = useVisualizerStore();
 
     const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -78,6 +79,7 @@ export const useSortingPlayback = () =>{
                         }
                     }
                     nextStep();
+                    useVisualizerStore.setState({currentOpsCount: currentStepIndex + 1})
                 }else{
                     setIsPlaying(false);
                     if(timerRef.current) clearInterval(timerRef.current);
