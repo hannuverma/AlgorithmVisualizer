@@ -18,7 +18,7 @@ async def run_bubble_sort(payload: SortingRequest):
             detail=f"An error occurred executing the algorithm engine: {str(e)}"
         )
 
-@router.post("/insertion_sort", response_model=SortingResponse, status_code=status.HTTP_200_OK)
+@router.post("/insertion-sort", response_model=SortingResponse, status_code=status.HTTP_200_OK)
 async def run_insertion_sort(payload: SortingRequest):
     try:
         timeline = SortingEngine.insertion_sort(payload.array)

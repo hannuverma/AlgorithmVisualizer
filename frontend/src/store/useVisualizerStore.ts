@@ -22,6 +22,7 @@ interface VisualizerState{
     setCurrentStepIndex: (index: number) => void;
     setIsPlaying: (isPlaying: boolean) => void;
     setPlaybackSpeed: (speed: number) => void;
+    setTimeline: (timeline: SortingStep[]) => void;
     nextStep: () =>void;
     prevStep: () => void;
     resetPlayback: () => void;
@@ -62,7 +63,7 @@ export const useVisualizerStore = create<VisualizerState>((set) => ({
     setCurrentStepIndex: (currentStepIndex) => set({ currentStepIndex }),
     setIsPlaying: (isPlaying) => set({ isPlaying }),
     setPlaybackSpeed: (playbackSpeed) => set({ playbackSpeed }),
-
+    setTimeline: (timeline) => set({ timeline, currentStepIndex: 0, isPlaying: false, error: null }),
     nextStep: () => set((state) => ({
     currentStepIndex: Math.min(state.currentStepIndex + 1, state.timeline.length - 1)
     })),
