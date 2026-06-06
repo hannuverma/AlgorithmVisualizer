@@ -6,6 +6,9 @@ interface SortingStep{
     array: number[],
     highlighted_indices: number[];
     swapped_indices: number[];
+    active_range?: number[];
+    depths?: number[];
+    sorted_indices?: number[];
     action_description: string;
 }
 

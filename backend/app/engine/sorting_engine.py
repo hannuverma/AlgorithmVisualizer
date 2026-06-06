@@ -134,3 +134,77 @@ class SortingEngine:
         )
         
         return timeline
+
+    @staticmethod
+    def quick_sort(initial_array: List[int]) -> List[SortingStep]:
+
+        timeline:List[SortingStep] = []
+        arr = initial_array.copy()
+        n = len(arr)
+        
+        depths = [0] * n
+        sorted_indices = []
+
+        def append_step(highlighted, swapped, active_range, action):
+            timeline.append(
+                SortingStep(
+                    array=arr.copy(),
+                    highlighted_indices=highlighted,
+                    swapped_indices=swapped,
+                    active_range=active_range,
+                    depths=depths.copy(),
+                    sorted_indices=sorted_indices.copy(),
+                    action_description=action
+                )
+            )
+
+        def partition(low:int, high:int) ->int:
+            pivot = arr[high]
+            i = low - 1
+
+            for j in range(low,high):
+
+                append_step([i, j, high], [], [low, high], f"Comparing pivot {pivot} with {arr[j]} at index {j}. Shifting {arr[j]} right.")
+
+                if arr[j] <= pivot:
+                    i += 1
+                    arr[i], arr[j] = arr[j], arr[i]
+
+                    append_step([i, j], [i, j], [low, high], f"Swapped {arr[j]} and {arr[i]} because {arr[j]} <= {pivot}")
+            
+            arr[i + 1], arr[high] = arr[high], arr[i + 1]
+            
+            append_step([i + 1, high], [i + 1, high], [low, high], f"Placed pivot element {pivot} back into its correct position at index {i + 1}.")
+
+            return i + 1
+
+        def quick_sort_recursive(low:int, high:int, depth:int):
+            if low < high:
+                for k in range(low, high + 1):
+                    if k not in sorted_indices:
+                        depths[k] = depth
+                        
+                pi = partition(low, high)
+                
+                sorted_indices.append(pi)
+                depths[pi] = 0
+                
+                append_step([pi], [], None, f"Pivot element {arr[pi]} is now in its final sorted position.")
+
+                quick_sort_recursive(low, pi - 1, depth + 1)
+                quick_sort_recursive(pi + 1, high, depth + 1)
+            elif low == high:
+                sorted_indices.append(low)
+                depths[low] = 0
+                append_step([low], [], None, f"Element {arr[low]} is trivially sorted.")
+
+        append_step([], [], None, "Initialized unsorted array. Preparing to start Quick Sort.")
+
+        quick_sort_recursive(0, n - 1, 1)
+
+        append_step([], [], None, "Quick sort complete.")
+
+        return timeline
+
+        
+                

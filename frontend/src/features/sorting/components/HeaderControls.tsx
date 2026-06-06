@@ -54,6 +54,7 @@ export const HeaderControls: React.FC = () => {
           >
             <option value="bubble-sort">Bubble Sort</option>
             <option value="insertion-sort">Insertion Sort</option>
+            <option value="quick-sort">Quick Sort</option>
           </select>
         </div>
 

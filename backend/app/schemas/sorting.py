@@ -6,6 +6,9 @@ class SortingStep(BaseModel):
     array: List[int] = Field(..., description="The current state of the array at this step")
     highlighted_indices: List[int] = Field(default_factory=list, description="Indices currently being processed")
     swapped_indices: List[int] = Field(default_factory=list, description="Indices that were just swapped")
+    active_range: Optional[List[int]] = Field(default=None, description="The [start, end] indices of the active subarray")
+    depths: Optional[List[int]] = Field(default=None, description="The recursion depth for each element")
+    sorted_indices: Optional[List[int]] = Field(default=None, description="Indices that are in their final sorted position")
     action_description: str = Field(..., description="Description of the operation performed")
 
 class SortingRequest(BaseModel):
