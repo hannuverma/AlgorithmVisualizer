@@ -1,21 +1,29 @@
 // frontend/src/features/sorting/components/ControlPanel.tsx
 import React from 'react';
-import { useVisualizerStore } from '../../../store/useVisualizerStore';
+export interface ControlPanelProps {
+  isPlaying: boolean;
+  setIsPlaying: (isPlaying: boolean) => void;
+  currentStepIndex: number;
+  timelineLength: number;
+  playbackSpeed: number;
+  setPlaybackSpeed: (speed: number) => void;
+  nextStep: () => void;
+  prevStep: () => void;
+  resetPlayback: () => void;
+}
 
-export const ControlPanel: React.FC = () => {
-  const { 
-    isPlaying, 
-    setIsPlaying, 
-    currentStepIndex, 
-    timeline, 
-    playbackSpeed, 
-    setPlaybackSpeed,
-    nextStep,
-    prevStep,
-    resetPlayback 
-  } = useVisualizerStore();
-
-  const hasData = timeline.length > 0;
+export const ControlPanel: React.FC<ControlPanelProps> = ({
+  isPlaying,
+  setIsPlaying,
+  currentStepIndex,
+  timelineLength,
+  playbackSpeed,
+  setPlaybackSpeed,
+  nextStep,
+  prevStep,
+  resetPlayback
+}) => {
+  const hasData = timelineLength > 0;
 
   return (
     <div className="glass-card w-full p-4 flex flex-col md:flex-row items-center justify-between gap-4">
@@ -43,7 +51,7 @@ export const ControlPanel: React.FC = () => {
 
         <button
           onClick={nextStep}
-          disabled={!hasData || currentStepIndex === timeline.length - 1 || isPlaying}
+          disabled={!hasData || currentStepIndex === timelineLength - 1 || isPlaying}
           className="px-3 py-2 bg-slate-800 text-slate-200 rounded-lg hover:bg-slate-700 disabled:opacity-40 font-semibold"
         >
           Step Forward
@@ -74,7 +82,7 @@ export const ControlPanel: React.FC = () => {
 
       {/* Progress Metric Readout */}
       <div className="text-xs font-mono text-slate-400">
-        Step: <span className="text-blue-400">{hasData ? currentStepIndex + 1 : 0}</span> / {timeline.length}
+        Step: <span className="text-blue-400">{hasData ? currentStepIndex + 1 : 0}</span> / {timelineLength}
       </div>
     </div>
   );

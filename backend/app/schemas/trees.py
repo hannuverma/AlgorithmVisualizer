@@ -15,11 +15,12 @@ class TreeNodeSnapshot(BaseModel):
     y: int = Field(..., description="Y-coordinate of the node")
     parent_id: Optional[str] = Field(None, description="ID of the parent node")
     is_root : bool = Field(False, description="Whether the node is the root")
+    is_leaf: bool = Field(False, description="Tells if the node is a leaf node or not")
 
 class TreeStep(BaseModel):
 
     nodes: List[TreeNodeSnapshot] = Field(..., description="List of node snapshots in the current tree state")
-    highlighted_noes: List[TreeNodeSnapshot] = Field(..., description="List of all the highlighted nodes")
+    highlighted_nodes: List[str] = Field(default_factory=list, description="List of IDs for all the highlighted nodes")
     mutated_nodes: List[str] = Field(default_factory=list, description="Nodes actively being modified, inserted, or rebalanced")
     action_description: str = Field(..., description="Description of the current action")
 
@@ -27,7 +28,7 @@ class TreeStep(BaseModel):
 
 class TreeRequest(BaseModel):
 
-    values: List[int] = Field(..., min_items=1, max_items=30, description="Sequence of integers to operate on")\
+    values: List[int] = Field(..., min_items=1, max_items=50, description="Sequence of integers to operate on")\
 
 class TreeResponse(BaseModel):
 

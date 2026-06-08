@@ -1,9 +1,11 @@
 // frontend/src/features/sorting/components/ConsoleLayer.tsx
 import React, { useEffect, useRef } from 'react';
-import { useVisualizerStore } from '../../../store/useVisualizerStore';
+export interface ConsoleLayerProps {
+  timeline: { action_description: string }[];
+  currentStepIndex: number;
+}
 
-export const ConsoleLayer: React.FC = () => {
-  const { timeline, currentStepIndex } = useVisualizerStore();
+export const ConsoleLayer: React.FC<ConsoleLayerProps> = ({ timeline, currentStepIndex }) => {
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {

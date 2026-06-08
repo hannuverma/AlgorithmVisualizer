@@ -1,10 +1,18 @@
 // frontend/src/features/sorting/components/HeaderControls.tsx
 import React, { useState } from 'react';
 import { useVisualizerStore } from '../../../store/useVisualizerStore';
+import { useTreeStore } from '../../../store/useTreeStore';
+import { useAppStore } from '../../../store/useAppStore';
 
 export const HeaderControls: React.FC = () => {
-  const { generateSortingTimeline, isLoading } = useVisualizerStore();
+  const { activeView, setActiveView } = useAppStore();
+  const { generateSortingTimeline, isLoading: isSortingLoading } = useVisualizerStore();
+  const { generateTreeTimeline, isLoading: isTreeLoading } = useTreeStore();
+  
+  const isLoading = activeView === 'sorting' ? isSortingLoading : isTreeLoading;
   const [selectedAlgo, setSelectedAlgo] = useState('bubble-sort');
+  const [selectedTreeType, setSelectedTreeType] = useState('bst');
+  const [selectedTreeAction, setSelectedTreeAction] = useState('insert');
   const [inputType, setInputType] = useState<'random' | 'custom'>('random');
   const [arraySize, setArraySize] = useState(20);
   const [customArrayStr, setCustomArrayStr] = useState('15, 8, 25, 4, 30');
@@ -39,7 +47,23 @@ export const HeaderControls: React.FC = () => {
     }
     
     // Pass the raw array to the backend to get the timeline execution sequence
-    generateSortingTimeline(algoToUse, newArray);
+    if (activeView === 'sorting') {
+      generateSortingTimeline(algoToUse, newArray);
+    } else if (activeView === 'trees') {
+      generateTreeTimeline(newArray, selectedTreeType, selectedTreeAction);
+    }
+  };
+
+  const TabButton = ({ label, view }: { label: string, view: any }) => {
+    const isActive = activeView === view;
+    return (
+      <button 
+        onClick={() => setActiveView(view)}
+        className={`${isActive ? 'bg-[#16191f] text-slate-100 shadow-[0_1px_3px_rgba(0,0,0,0.5)] border border-slate-700/50' : 'text-slate-400 hover:text-slate-200'} px-4 py-1.5 text-[13px] font-medium rounded transition-all`}
+      >
+        {label}
+      </button>
+    );
   };
 
   return (
@@ -60,34 +84,72 @@ export const HeaderControls: React.FC = () => {
 
         {/* Segmented Control Tabs */}
         <div className="hidden lg:flex bg-black/30 border border-slate-800/80 rounded-lg p-1">
-          <button className="bg-[#16191f] text-slate-100 shadow-[0_1px_3px_rgba(0,0,0,0.5)] border border-slate-700/50 px-4 py-1.5 text-[13px] font-medium rounded transition-all">Sorting Engines</button>
-          <button className="text-slate-400 hover:text-slate-200 px-4 py-1.5 text-[13px] font-medium rounded transition-all">Network Graphs</button>
-          <button className="text-slate-400 hover:text-slate-200 px-4 py-1.5 text-[13px] font-medium rounded transition-all">Tree Structures</button>
-          <button className="text-slate-400 hover:text-slate-200 px-4 py-1.5 text-[13px] font-medium rounded transition-all">Telemetry Hub</button>
+          <TabButton label="Sorting Engines" view="sorting" />
+          <TabButton label="Network Graphs" view="graphs" />
+          <TabButton label="Tree Structures" view="trees" />
+          <TabButton label="Telemetry Hub" view="telemetry" />
         </div>
 
         {/* Controls Area */}
         <div className="flex flex-wrap items-center gap-4 lg:gap-6 w-full lg:w-auto justify-between lg:justify-end">
           
-          <div className="flex items-center gap-2">
-            <span className="font-mono text-[11px] text-slate-400 uppercase tracking-wider">Algorithm</span>
-            <select
-              value={selectedAlgo}
-              onChange={(e) => {
-                const newAlgo = e.target.value;
-                setSelectedAlgo(newAlgo);
-                handleGenerateArray(newAlgo);
-              }}
-              disabled={isLoading}
-              className="bg-[#0f1115] text-slate-100 border border-slate-800 rounded px-3 py-1 text-[13px] font-mono focus:outline-none focus:border-blue-500 disabled:opacity-50"
-            >
-              <option value="bubble-sort">Bubble Sort</option>
-              <option value="counting-sort">Counting Sort</option>
-              <option value="insertion-sort">Insertion Sort</option>
-              <option value="quick-sort">Quick Sort</option>
-              <option value="selection-sort">Selection Sort</option>
-            </select>
-          </div>
+          {activeView === 'sorting' && (
+            <div className="flex items-center gap-2">
+              <span className="font-mono text-[11px] text-slate-400 uppercase tracking-wider">Algorithm</span>
+              <select
+                value={selectedAlgo}
+                onChange={(e) => {
+                  const newAlgo = e.target.value;
+                  setSelectedAlgo(newAlgo);
+                  handleGenerateArray(newAlgo);
+                }}
+                disabled={isLoading}
+                className="bg-[#0f1115] text-slate-100 border border-slate-800 rounded px-3 py-1 text-[13px] font-mono focus:outline-none focus:border-blue-500 disabled:opacity-50"
+              >
+                <option value="bubble-sort">Bubble Sort</option>
+                <option value="counting-sort">Counting Sort</option>
+                <option value="insertion-sort">Insertion Sort</option>
+                <option value="quick-sort">Quick Sort</option>
+                <option value="selection-sort">Selection Sort</option>
+              </select>
+            </div>
+          )}
+
+          {activeView === 'trees' && (
+            <>
+              <div className="flex items-center gap-2">
+                <span className="font-mono text-[11px] text-slate-400 uppercase tracking-wider">Type</span>
+                <select
+                  value={selectedTreeType}
+                  onChange={(e) => {
+                    setSelectedTreeType(e.target.value);
+                  }}
+                  disabled={isLoading}
+                  className="bg-[#0f1115] text-slate-100 border border-slate-800 rounded px-3 py-1 text-[13px] font-mono focus:outline-none focus:border-blue-500 disabled:opacity-50"
+                >
+                  <option value="bst">Binary Search Tree</option>
+                  <option value="avl">AVL Tree</option>
+                  <option value="red-black">Red-Black Tree</option>
+                </select>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <span className="font-mono text-[11px] text-slate-400 uppercase tracking-wider">Action</span>
+                <select
+                  value={selectedTreeAction}
+                  onChange={(e) => {
+                    setSelectedTreeAction(e.target.value);
+                  }}
+                  disabled={isLoading}
+                  className="bg-[#0f1115] text-slate-100 border border-slate-800 rounded px-3 py-1 text-[13px] font-mono focus:outline-none focus:border-blue-500 disabled:opacity-50"
+                >
+                  <option value="insert">Insert</option>
+                  <option value="delete">Delete</option>
+                  <option value="search">Search</option>
+                </select>
+              </div>
+            </>
+          )}
 
           <div className="flex items-center gap-2">
              <span className="font-mono text-[11px] text-slate-400 uppercase tracking-wider">Mode</span>
