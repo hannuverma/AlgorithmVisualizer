@@ -267,7 +267,7 @@ class SortingEngine:
                     highlighted_indices=[i, minIndx],
                     swapped_indices=[i, minIndx],
                     sorted_indices=sorted_indices.copy(),
-                    action_description=f"Swapped element at index {i} with element at index {minIndx} because {arr[j]} < {arr[minIndx]}"
+                    action_description=f"Swapped element at index {i} with element at index {minIndx}."
                 )
             )
             sorted_indices.append(i)
