@@ -15,7 +15,8 @@ UNSORTED_CASES = [
     SortingEngine.bubble_sort,
     SortingEngine.selection_sort,
     SortingEngine.quick_sort,
-    SortingEngine.insertion_sort
+    SortingEngine.insertion_sort,
+    SortingEngine.counting_sort
 ])
 
 @pytest.mark.parametrize("input_array, expected_sorted", UNSORTED_CASES)

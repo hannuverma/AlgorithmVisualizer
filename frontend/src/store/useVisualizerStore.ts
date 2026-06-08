@@ -9,6 +9,8 @@ interface SortingStep{
     active_range?: number[];
     depths?: number[];
     sorted_indices?: number[];
+    number_array?: number[];
+    sorted_array?: number[];
     action_description: string;
 }
 
@@ -58,7 +60,8 @@ export const useVisualizerStore = create<VisualizerState>((set) => ({
             set({ 
             timeline: response.data.timeline, 
             algorithm: algorithm,
-            isLoading: false 
+            isLoading: false,
+            isPlaying: false
             });
         } catch (err: any) {
             set({ 

@@ -7,6 +7,7 @@ export const ComplexityChart: React.FC = () => {
   const { timeline, currentStepIndex, currentOpsCount, algorithm } = useVisualizerStore();
 
   const n = timeline.length > 0 ? timeline[0].array.length : 0;
+  const max = timeline.length > 0 ? Math.max(...timeline[0].array) : 0;
 
   // 1. Generate theoretical data points up to size N
   // This builds our static comparison background curves
@@ -28,6 +29,10 @@ export const ComplexityChart: React.FC = () => {
         bestCase = Math.pow(i, 2) * 0.5;
         averageCase = Math.pow(i, 2) * 0.75;
         worstCase = Math.pow(i, 2);
+      } else if (algorithm === 'counting-sort') {
+        bestCase = max + i * 2;
+        averageCase = max + i * 2.25;
+        worstCase = max + i * 2.5;
       } else {
         // bubble-sort, insertion-sort
         bestCase = i;
@@ -94,16 +99,16 @@ export const ComplexityChart: React.FC = () => {
       </div>
 
       <div className="flex flex-col gap-2 pt-2">
-        <div className="flex justify-between items-center text-[10px] font-mono text-slate-400"><div className="flex items-center gap-2"><div className="w-2 h-2 bg-rose-500 rounded-sm"></div> Worst Case O(N²)</div> <span>Quadratic</span></div>
+        <div className="flex justify-between items-center text-[10px] font-mono text-slate-400"><div className="flex items-center gap-2"><div className="w-2 h-2 bg-rose-500 rounded-sm"></div> Worst Case {algorithm === 'counting-sort' ? 'O(N + K)' : 'O(N²)'}</div> <span>{algorithm === 'counting-sort' ? 'Linear' : 'Quadratic'}</span></div>
         <div className="flex justify-between items-center text-[10px] font-mono text-slate-400">
           <div className="flex items-center gap-2">
-            <div className="w-2 h-2 bg-slate-400 rounded-sm"></div> Average {algorithm === 'quick-sort' ? 'O(N log N)' : 'O(N²)'}
+            <div className="w-2 h-2 bg-slate-400 rounded-sm"></div> Average {algorithm === 'quick-sort' ? 'O(N log N)' : algorithm === 'counting-sort' ? 'O(N + K)' : 'O(N²)'}
           </div> 
-          <span>{algorithm === 'quick-sort' ? 'Linearithmic' : 'Quadratic'}</span>
+          <span>{algorithm === 'quick-sort' ? 'Linearithmic' : algorithm === 'counting-sort' ? 'Linear' : 'Quadratic'}</span>
         </div>
         <div className="flex justify-between items-center text-[10px] font-mono text-slate-400">
           <div className="flex items-center gap-2">
-            <div className="w-2 h-2 bg-emerald-500 rounded-sm"></div> Best Case {algorithm === 'quick-sort' ? 'O(N log N)' : algorithm === 'selection-sort' ? 'O(N²)' : 'O(N)'}
+            <div className="w-2 h-2 bg-emerald-500 rounded-sm"></div> Best Case {algorithm === 'quick-sort' ? 'O(N log N)' : algorithm === 'selection-sort' ? 'O(N²)' : algorithm === 'counting-sort' ? 'O(N + K)' : 'O(N)'}
           </div> 
           <span>{algorithm === 'quick-sort' ? 'Linearithmic' : algorithm === 'selection-sort' ? 'Quadratic' : 'Linear'}</span>
         </div>

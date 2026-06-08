@@ -16,7 +16,9 @@ export const HeaderControls: React.FC = () => {
 
     if (inputType === 'random') {
       newArray = Array.from({ length: arraySize }, () => 
-        Math.floor(Math.random() * 190) + 10 // Values between 10 and 200
+        algoToUse === 'counting-sort' 
+          ? Math.floor(Math.random() * 20) + 1  // Values between 1 and 20
+          : Math.floor(Math.random() * 190) + 10 // Values between 10 and 200
       );
     } else {
       // Parse custom array
@@ -80,6 +82,7 @@ export const HeaderControls: React.FC = () => {
               className="bg-[#0f1115] text-slate-100 border border-slate-800 rounded px-3 py-1 text-[13px] font-mono focus:outline-none focus:border-blue-500 disabled:opacity-50"
             >
               <option value="bubble-sort">Bubble Sort</option>
+              <option value="counting-sort">Counting Sort</option>
               <option value="insertion-sort">Insertion Sort</option>
               <option value="quick-sort">Quick Sort</option>
               <option value="selection-sort">Selection Sort</option>

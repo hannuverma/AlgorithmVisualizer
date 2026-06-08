@@ -10,6 +10,8 @@ class SortingStep(BaseModel):
     depths: Optional[List[int]] = Field(default=None, description="The recursion depth for each element")
     sorted_indices: Optional[List[int]] = Field(default=None, description="Indices that are in their final sorted position")
     action_description: str = Field(..., description="Description of the operation performed")
+    number_array: Optional[List[int]] = Field(default=None, description="Auxiliary data for Counting Sort")
+    sorted_array: Optional[List[int]] = Field(default=None, description="Sorted array for counting sort")
 
 class SortingRequest(BaseModel):
 

@@ -2,6 +2,7 @@
 import React from 'react';
 import { HeaderControls } from './features/sorting/components/HeaderControls';
 import { BarChart } from './features/sorting/components/BarChart';
+import { CountingSortChart } from './features/sorting/components/CountingSortChart';
 import { ControlPanel } from './features/sorting/components/ControlPanel';
 import { ConsoleLayer } from './features/sorting/components/ConsoleLayer';
 import { useVisualizerStore } from './store/useVisualizerStore';
@@ -9,7 +10,7 @@ import { useSortingPlayback } from './features/sorting/hooks/useSortingPlayback'
 import { ComplexityChart } from './features/sorting/components/ComplexityChart';
 
 export const App: React.FC = () => {
-  const { error, isLoading, timeline } = useVisualizerStore();
+  const { error, isLoading, timeline, algorithm, isPlaying } = useVisualizerStore();
   
   // Initialize the execution clock pulse frame loop
   useSortingPlayback();
@@ -18,7 +19,9 @@ export const App: React.FC = () => {
     <div className="min-h-screen flex flex-col selection:bg-blue-500/30 font-sans">
       
       {/* Global Navigation and Controls */}
-      <HeaderControls />
+      <div className={`transition-all duration-500 overflow-hidden ${isPlaying ? 'max-h-0 opacity-0' : 'max-h-[500px] opacity-100'}`}>
+        <HeaderControls />
+      </div>
 
       {/* Main Content Area */}
       <main className="max-w-[1400px] w-full mx-auto flex flex-col gap-6 flex-1 px-4 py-6">
@@ -34,13 +37,15 @@ export const App: React.FC = () => {
         <div className="relative">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
             {/* Left 2 Columns hold the main sorting canvas visualizer */}
-            <div className="lg:col-span-2">
-              <BarChart />
+            <div className="lg:col-span-2 flex flex-col gap-6">
+              {algorithm === 'counting-sort' ? <CountingSortChart /> : <BarChart />}
+              {timeline.length > 0 && <ControlPanel />}
             </div>
 
             {/* Right Column holds your advanced real-time telemetry card */}
-            <div className="lg:col-span-1">
+            <div className="lg:col-span-1 flex flex-col">
               <ComplexityChart />
+              <ConsoleLayer />
             </div>
           </div>
           {isLoading && (
@@ -53,17 +58,7 @@ export const App: React.FC = () => {
           )}
         </div>
 
-        {/* Bottom Control Panel and Console Output */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Bottom Playback Sequence Ticker Center */}
-          <div className="lg:col-span-2">
-            {timeline.length > 0 && <ControlPanel />}
-          </div>
-          {/* Dynamic Console Output & Code Editor Placeholder */}
-          <div className="lg:col-span-1 mt-[-65px] w-110">
-            <ConsoleLayer />
-          </div>
-        </div>
+
 
         
       </main>

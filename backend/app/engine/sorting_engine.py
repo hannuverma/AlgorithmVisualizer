@@ -284,3 +284,79 @@ class SortingEngine:
         )
 
         return timeline
+
+    @staticmethod
+    def counting_sort(initial_array: List[int]) -> List[SortingStep]:
+        
+        timeline: List[SortingStep] = []
+        if not initial_array:
+            return [SortingStep(array=[], action_description="Empty array provided.")]
+        arr = initial_array.copy()
+        n = len(arr)
+
+        count_array = [0] * (max(arr) + 1)
+        sorted_arr = [0] * n
+        def append_step(highlighted, swapped, action):
+            timeline.append(
+                SortingStep(
+                    array=arr.copy(),
+                    highlighted_indices=highlighted,
+                    swapped_indices=swapped,
+                    action_description=action,
+                    number_array=count_array.copy(),
+                    sorted_array=sorted_arr.copy()
+                )
+            )
+
+        append_step([], [], "Initialized auxiliary counting frequencies.")
+
+        for i in range(n):
+            num = arr[i]
+            count_array[num] += 1
+            append_step(
+                highlighted=[i], 
+                swapped=[], 
+                action=f"Phase 1: Tabulating frequencies. Incremented count for value {num} to {count_array[num]}."
+            )
+
+        for i in range(1, len(count_array)):
+            count_array[i] += count_array[i - 1]
+            append_step(
+                highlighted=[], 
+                swapped=[], 
+                action=f"Phase 2: Accumulated indices. Elements <= {i} fall within index boundary {count_array[i]}."
+            )
+
+        for i in range(n - 1, -1, -1):
+            num = arr[i]
+            target_index = count_array[num] - 1
+            sorted_arr[target_index] = num
+            count_array[num] -= 1
+            
+            timeline.append(
+                SortingStep(
+                    array=arr.copy(),
+                    highlighted_indices=[i],
+                    swapped_indices=[target_index],
+                    action_description=f"Phase 3: Relocating element {num} from original index {i} to verified sorted block position {target_index}.",
+                    number_array=count_array.copy(),
+                    sorted_array=sorted_arr.copy()
+                )
+            )
+
+        arr = sorted_arr
+        timeline.append(
+            SortingStep(
+                array=arr.copy(),
+                highlighted_indices=[],
+                swapped_indices=[],
+                sorted_indices=list(range(n)),
+                action_description="Counting Sort completed successfully. Data structure completely ordered.",
+                number_array=count_array.copy(),
+                sorted_array=sorted_arr.copy()
+            )
+        )
+
+        return timeline
+
+        
