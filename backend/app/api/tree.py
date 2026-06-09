@@ -44,13 +44,13 @@ def run_tree_operation(tree_type: str, action: str, payload: TreeRequest):
             elif action == "search":
                 timeline = engine.avl_search(payload.values, payload.target_value)
             elif action == "inorder":
-                timeline = TreeEngine.inorder_traversal(payload.values)
+                timeline = engine.inorder_traversal(payload.values)
             elif action == "preorder":
-                timeline = TreeEngine.preorder_traversal(payload.values)
+                timeline = engine.preorder_traversal(payload.values)
             elif action == "postorder":
-                timeline = TreeEngine.postorder_traversal(payload.values)
+                timeline = engine.postorder_traversal(payload.values)
             elif action == "levelorder":
-                timeline = TreeEngine.level_order_traversal(payload.values)
+                timeline = engine.level_order_traversal(payload.values)
             elif action == "delete":
                 if not payload.target_id:
                     raise ValueError("target_id must be provided for deletion.")

@@ -1,3 +1,4 @@
+from collections import deque
 from typing import List, Optional
 from app.schemas.trees import TreeStep, TreeNodeSnapshot
 from app.engine.tree_engine import TreeEngine
@@ -311,4 +312,271 @@ class AVLEngine:
                     action_description=f"Reached empty leaf. Target {target} not found in the tree."
                 )
             )
+        return timeline
+
+
+    @classmethod
+    def inorder_traversal(cls, values: List[int]) -> List[TreeStep]:
+
+        if not values:
+            return []
+        timeline: List[TreeStep] = []
+
+        root = cls._build_tree(values)
+        static_nodes = cls._get_layout(root)
+
+        visited_sequence : List[TreeStep] = []
+
+        def traverse(node : Optional[AVLTreeNode] = None):
+
+            if not node:
+                return
+
+            timeline.append(
+                TreeStep(
+                    nodes=static_nodes,
+                    highlighted_nodes=[node.id],
+                    mutated_nodes=[],
+                    visited_sequence=list(visited_sequence),
+                    action_description=f"In-order lookup on {node.value}. Exploring its LEFT subtree next."
+                )
+            )
+
+            traverse(node.left)
+
+            visited_sequence.append(node.value)
+            timeline.append(
+                TreeStep(
+                    nodes=static_nodes,
+                    highlighted_nodes=[node.id],
+                    mutated_nodes=[node.id], # Flash node active to symbolize printing event
+                    visited_sequence=list(visited_sequence),
+                    action_description=f"Processing node key {node.value}. Added to output path history sequence."
+                )
+            )
+
+            timeline.append(
+                TreeStep(
+                    nodes=static_nodes,
+                    highlighted_nodes=[node.id],
+                    mutated_nodes=[],
+                    visited_sequence=list(visited_sequence),
+                    action_description=f"Finished exploring left side of {node.value}. Moving to its RIGHT subtree next."
+                )
+            )
+
+            traverse(node.right)
+
+        traverse(root)
+
+        timeline.append(
+            TreeStep(
+                nodes=static_nodes,
+                highlighted_nodes=[],
+                mutated_nodes=[],
+                visited_sequence=list(visited_sequence),
+                action_description=f"In-Order Traversal completed. Complete path route sequence generated."
+            )
+        )
+        return timeline
+
+    @classmethod
+    def preorder_traversal(cls, values: List[int]) -> List[TreeStep]:
+        if not values:
+            return []
+        timeline: List[TreeStep] = []
+        root = cls._build_tree(values)
+        static_nodes = cls._get_layout(root)
+        visited_sequence: List[TreeStep] = []
+
+        def traverse(node: Optional[AVLTreeNode] = None):
+            if not node:
+                return
+
+            visited_sequence.append(node.value)
+            timeline.append(
+                TreeStep(
+                    nodes=static_nodes,
+                    highlighted_nodes=[node.id],
+                    mutated_nodes=[node.id],
+                    visited_sequence=list(visited_sequence),
+                    action_description=f"Processing node key {node.value}. Added to output path history sequence."
+                )
+            )
+
+            timeline.append(
+                TreeStep(
+                    nodes=static_nodes,
+                    highlighted_nodes=[node.id],
+                    mutated_nodes=[],
+                    visited_sequence=list(visited_sequence),
+                    action_description=f"Exploring LEFT subtree of {node.value}."
+                )
+            )
+            traverse(node.left)
+
+            timeline.append(
+                TreeStep(
+                    nodes=static_nodes,
+                    highlighted_nodes=[node.id],
+                    mutated_nodes=[],
+                    visited_sequence=list(visited_sequence),
+                    action_description=f"Exploring RIGHT subtree of {node.value}."
+                )
+            )
+            traverse(node.right)
+
+        traverse(root)
+
+        timeline.append(
+            TreeStep(
+                nodes=static_nodes,
+                highlighted_nodes=[],
+                mutated_nodes=[],
+                visited_sequence=list(visited_sequence),
+                action_description=f"Pre-Order Traversal completed. Complete path route sequence generated."
+            )
+        )
+        return timeline
+
+    @classmethod
+    def postorder_traversal(cls, values: List[int]) -> List[TreeStep]:
+        if not values:
+            return []
+        timeline: List[TreeStep] = []
+        root = cls._build_tree(values)
+        static_nodes = cls._get_layout(root)
+        visited_sequence: List[TreeStep] = []
+
+        def traverse(node: Optional[AVLTreeNode] = None):
+            if not node:
+                return
+
+            timeline.append(
+                TreeStep(
+                    nodes=static_nodes,
+                    highlighted_nodes=[node.id],
+                    mutated_nodes=[],
+                    visited_sequence=list(visited_sequence),
+                    action_description=f"Post-order lookup on {node.value}. Exploring LEFT subtree first."
+                )
+            )
+            traverse(node.left)
+
+            timeline.append(
+                TreeStep(
+                    nodes=static_nodes,
+                    highlighted_nodes=[node.id],
+                    mutated_nodes=[],
+                    visited_sequence=list(visited_sequence),
+                    action_description=f"Finished exploring left side of {node.value}. Exploring RIGHT subtree."
+                )
+            )
+            traverse(node.right)
+
+            visited_sequence.append(node.value)
+            timeline.append(
+                TreeStep(
+                    nodes=static_nodes,
+                    highlighted_nodes=[node.id],
+                    mutated_nodes=[node.id],
+                    visited_sequence=list(visited_sequence),
+                    action_description=f"Both subtrees of {node.value} processed. Added to output path history sequence."
+                )
+            )
+
+        traverse(root)
+
+        timeline.append(
+            TreeStep(
+                nodes=static_nodes,
+                highlighted_nodes=[],
+                mutated_nodes=[],
+                visited_sequence=list(visited_sequence),
+                action_description=f"Post-Order Traversal completed. Complete path route sequence generated."
+            )
+        )
+        return timeline
+
+
+    @classmethod
+    def level_order_traversal(cls, values: List[int]) -> List[TreeStep]:
+        if not values:
+            return []
+        
+        timeline: List[TreeStep] = []
+        root = cls._build_tree(values)
+        static_nodes = cls._get_layout(root)
+        
+        # FIX 1: Track actual integer node values printed, not TreeSteps
+        visited_sequence: List[int] = []
+
+        if not root:
+            return timeline
+
+        # FIX 2: Initialize standard Python collections deque container
+        queue = deque([root])
+
+        # Walk layer by layer
+        while queue:
+            # The number of elements currently in the queue is EXACTLY the size of this row level
+            level_size = len(queue)
+            
+            timeline.append(
+                TreeStep(
+                    nodes=static_nodes,
+                    highlighted_nodes=[n.id for n in queue],  # Highlight the entire current horizontal row layer
+                    mutated_nodes=[],
+                    visited_sequence=list(visited_sequence),
+                    action_description=f"Approaching new tree layer. Level contains {level_size} frontier nodes."
+                )
+            )
+
+            # Process all nodes belonging exclusively to the current level depth
+            for _ in range(level_size):
+                # FIX 3: Use idiomatic Python deque extraction popleft()
+                node = queue.popleft()
+
+                # Process/Print node item value updates
+                visited_sequence.append(node.value)
+                
+                timeline.append(
+                    TreeStep(
+                        nodes=static_nodes,
+                        highlighted_nodes=[node.id],
+                        mutated_nodes=[node.id],  # Flash active node green/rose to show evaluation
+                        visited_sequence=list(visited_sequence),
+                        action_description=f"Processing node layer key {node.value}. Added to level output string stream."
+                    )
+                )
+
+                # Add children to back of queue frontier for the NEXT row pass level down
+                if node.left is not None:
+                    queue.append(node.left)
+                if node.right is not None:
+                    queue.append(node.right)
+
+            # Level completion check logic
+            if queue:
+                timeline.append(
+                    TreeStep(
+                        nodes=static_nodes,
+                        highlighted_nodes=[],
+                        mutated_nodes=[],
+                        visited_sequence=list(visited_sequence),
+                        action_description="Reached end of layer level block row. Shifting down to next depth tier."
+                    )
+                )
+
+        # Final wrap up completion state trace frame
+        timeline.append(
+            TreeStep(
+                nodes=static_nodes,
+                highlighted_nodes=[],
+                mutated_nodes=[],
+                visited_sequence=list(visited_sequence),
+                action_description="Level-Order Traversal completed. Complete path route sequence generated."
+            )
+        )
+
         return timeline
