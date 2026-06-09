@@ -1,6 +1,8 @@
 from fastapi import APIRouter, HTTPException, status
 from app.schemas.trees import TreeRequest, TreeResponse
 from app.engine.tree_engine import TreeEngine
+from app.engine.avl_engine import AVLEngine
+
 router = APIRouter()
 
 
@@ -11,6 +13,8 @@ def run_tree_operation(tree_type: str, action: str, payload: TreeRequest):
         # When you add AVL/RBT, you can map tree_type to different engines here
         if tree_type == "bst":
             engine = TreeEngine
+        elif tree_type == "avl":
+            engine = AVLEngine
         else:
             raise ValueError(f"Unsupported tree type: {tree_type}")
 
@@ -26,6 +30,10 @@ def run_tree_operation(tree_type: str, action: str, payload: TreeRequest):
             timeline = engine.postorder_traversal(payload.values)
         elif action == "levelorder":
             timeline = engine.level_order_traversal(payload.values)
+        elif action == "delete":
+            if not payload.target_id:
+                raise ValueError("target_id must be provided for deletion.")
+            timeline = engine.delete_bst_node(payload.values, payload.target_id)   
         else:
             raise ValueError(f"Unsupported tree action: {action}")
 

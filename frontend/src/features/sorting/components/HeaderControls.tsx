@@ -50,10 +50,14 @@ export const HeaderControls: React.FC = () => {
     if (activeView === 'sorting') {
       generateSortingTimeline(algoToUse, newArray);
     } else if (activeView === 'trees') {
-      // By default, if they click generate, we probably want to trigger an insertion to build the tree.
-      // But if they have a traversal selected, they might want to traverse. 
-      // I will send the action value so the backend can build AND traverse.
       generateTreeTimeline(newArray, selectedTreeType, selectedTreeAction);
+    }
+  };
+
+  const handleRunOnCurrentTree = () => {
+    const currentValues = useTreeStore.getState().inputValues;
+    if (currentValues.length > 0) {
+      generateTreeTimeline(currentValues, selectedTreeType, selectedTreeAction);
     }
   };
 
@@ -214,6 +218,16 @@ export const HeaderControls: React.FC = () => {
           >
             {isLoading ? 'Computing...' : 'Generate & Sync Data'}
           </button>
+
+          {activeView === 'trees' && useTreeStore.getState().inputValues.length > 0 && selectedTreeAction !== 'insert' && (
+            <button
+              onClick={handleRunOnCurrentTree}
+              disabled={isLoading}
+              className="px-4 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white font-medium rounded text-[13px] shadow-[0_0_12px_rgba(16,185,129,0.3)] active:scale-95 transition-all disabled:opacity-50 flex items-center justify-center gap-2"
+            >
+              {isLoading ? 'Computing...' : 'Run on Tree'}
+            </button>
+          )}
         </div>
       </div>
     </header>

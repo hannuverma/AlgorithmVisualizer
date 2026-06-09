@@ -2,13 +2,14 @@ import React, { useRef, useState, useEffect, MouseEvent as ReactMouseEvent } fro
 import { useTreeStore } from '../../../store/useTreeStore';
 
 export const TreeVisualizer: React.FC = () => {
-  const { timeline, currentStepIndex } = useTreeStore();
+  const { timeline, currentStepIndex, generateTreeTimeline, inputValues, treeType, setIsPlaying } = useTreeStore();
   
   const containerRef = useRef<HTMLDivElement>(null);
   const [scale, setScale] = useState(1);
   const [position, setPosition] = useState({ x: 50, y: 50 });
   const [isDragging, setIsDragging] = useState(false);
   const [lastMousePos, setLastMousePos] = useState({ x: 0, y: 0 });
+  const [hoveredNodeId, setHoveredNodeId] = useState<string | null>(null);
 
   useEffect(() => {
     const container = containerRef.current;
@@ -68,6 +69,8 @@ export const TreeVisualizer: React.FC = () => {
   }, [timeline, scale]);
 
   const handleMouseDown = (e: ReactMouseEvent<HTMLDivElement>) => {
+    // Only start drag if the click target is the container itself, not a node or button
+    if ((e.target as HTMLElement).closest('[data-tree-node]')) return;
     setIsDragging(true);
     setLastMousePos({ x: e.clientX, y: e.clientY });
   };
@@ -116,6 +119,7 @@ export const TreeVisualizer: React.FC = () => {
 
   const currentStep = timeline[currentStepIndex];
   const { nodes, highlighted_nodes, mutated_nodes } = currentStep;
+  const visitedSequence = currentStep.visited_sequence || [];
 
   const NODE_RADIUS = 20;
 
@@ -126,6 +130,9 @@ export const TreeVisualizer: React.FC = () => {
         <div className="flex items-center gap-3">
           <span className="font-mono text-[12px] text-amber-500 flex items-center gap-1.5"><div className="w-2 h-2 border-2 border-amber-500 rounded-sm"></div>Comparing/Active</span>
           <span className="font-mono text-[12px] text-emerald-500 flex items-center gap-1.5"><div className="w-2 h-2 border-2 border-emerald-500 rounded-sm"></div>Inserted/Mutated</span>
+          {visitedSequence.length > 0 && (
+            <span className="font-mono text-[12px] text-blue-400 flex items-center gap-1.5"><div className="w-2 h-2 border-2 border-blue-400 rounded-sm"></div>Visited</span>
+          )}
         </div>
       </div>
 
@@ -187,6 +194,7 @@ export const TreeVisualizer: React.FC = () => {
         {nodes.map(node => {
           const isHighlighted = highlighted_nodes.includes(node.id);
           const isMutated = mutated_nodes.includes(node.id);
+          const isVisited = visitedSequence.includes(node.value) && !isMutated && !isHighlighted;
 
           let borderClass = 'border-slate-600';
           let bgClass = 'bg-slate-800';
@@ -197,21 +205,65 @@ export const TreeVisualizer: React.FC = () => {
           } else if (isHighlighted) {
             borderClass = 'border-amber-400 shadow-[0_0_12px_rgba(251,191,36,0.5)]';
             bgClass = 'bg-amber-900/80';
+          } else if (isVisited) {
+            borderClass = 'border-blue-400 shadow-[0_0_10px_rgba(96,165,250,0.4)]';
+            bgClass = 'bg-blue-900/70';
           }
 
           return (
             <div
               key={node.id}
-              className={`absolute flex items-center justify-center rounded-full border-2 transition-all duration-300 text-white font-mono text-sm ${borderClass} ${bgClass}`}
+              data-tree-node
+              className="absolute"
               style={{
-                left: node.x,
-                top: node.y,
-                width: NODE_RADIUS * 2,
-                height: NODE_RADIUS * 2,
-                zIndex: isHighlighted || isMutated ? 10 : 1
+                left: node.x - 6,
+                top: node.y - 6,
+                width: NODE_RADIUS * 2 + 12,
+                height: NODE_RADIUS * 2 + 12,
+                zIndex: (isHighlighted || isMutated || hoveredNodeId === node.id) ? 20 : 1
               }}
+              onMouseEnter={() => setHoveredNodeId(node.id)}
+              onMouseLeave={() => setHoveredNodeId(null)}
             >
-              {node.value}
+              {/* Visual circle */}
+              <div
+                className={`absolute flex items-center justify-center rounded-full border-2 transition-all duration-300 text-white font-mono text-sm ${borderClass} ${bgClass}`}
+                style={{
+                  left: 6,
+                  top: 6,
+                  width: NODE_RADIUS * 2,
+                  height: NODE_RADIUS * 2,
+                }}
+              >
+                {node.value}
+              </div>
+              {/* Delete button */}
+              {hoveredNodeId === node.id && (
+                <button
+                  className="absolute bg-red-500 hover:bg-red-600 text-white rounded-full w-5 h-5 flex items-center justify-center text-[10px] cursor-pointer shadow-md transition-colors"
+                  style={{ top: 0, right: 0, zIndex: 30 }}
+                  onMouseDown={(e) => e.stopPropagation()}
+                  onClick={async (e) => {
+                    e.stopPropagation();
+                    setHoveredNodeId(null);
+                    await generateTreeTimeline(inputValues, treeType, 'delete', undefined, node.id);
+                    setIsPlaying(true);
+                    
+                    // Update input values so the deleted node doesn't respawn on next action
+                    const store = useTreeStore.getState();
+                    if (store.timeline && store.timeline.length > 0) {
+                      const finalNodes = store.timeline[store.timeline.length - 1].nodes;
+                      const newValues = [...finalNodes]
+                        .sort((a, b) => a.y !== b.y ? a.y - b.y : a.x - b.x)
+                        .map(n => n.value);
+                      useTreeStore.setState({ inputValues: newValues });
+                    }
+                  }}
+                  title="Delete node"
+                >
+                  ×
+                </button>
+              )}
             </div>
           );
         })}

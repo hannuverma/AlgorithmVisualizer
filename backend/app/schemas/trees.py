@@ -30,6 +30,7 @@ class TreeRequest(BaseModel):
 
     values: List[int] = Field(..., min_items=1, max_items=50, description="Sequence of integers to operate on")
     target_value: Optional[int] = Field(None, description="Value to search for in the tree")
+    target_id: Optional[str] = Field(None, description="ID of the node to delete")
 
 class TreeResponse(BaseModel):
 

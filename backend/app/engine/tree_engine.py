@@ -517,4 +517,181 @@ class TreeEngine:
 
         return timeline
 
+    @classmethod
+    def min_value(cls, node: Optional[BSTNode] = None):
+        if not node:
+            return None
 
+        while node.left is not None:
+            node = node.left
+        return node
+
+
+    @classmethod
+    def delete_bst_node(cls, values: List[int], target_id: str) -> List[TreeStep]:
+
+        if not values:
+            return []
+        
+        timeline: List[TreeStep] = []
+        root = cls._build_tree(values)
+        
+        search_path =[]
+        def get_layout():
+            return cls._get_layout(root)
+        try:
+            target_value = int(target_id.split("_")[0])
+        except (ValueError, IndexError):
+            return []
+
+
+        def delete_node(node: Optional[BSTNode], id_to_find: str, val_to_search: int) -> Optional[BSTNode]:
+
+            nonlocal root
+
+            if node is None:
+                timeline.append(
+                    TreeStep(
+                        nodes=get_layout(),
+                        highlighted_nodes=list(search_path),
+                        mutated_nodes=[],
+                        action_description=f"Deletion target ID '{id_to_find}' not found in the tree structural limits."
+                    )
+                )
+                return None
+
+            search_path.append(node.id)
+
+            timeline.append(
+                TreeStep(
+                    nodes=get_layout(),
+                    highlighted_nodes=list(search_path),
+                    mutated_nodes=[],
+                    action_description=f"Searching for node instance. Inspecting node {node.value} (ID: {node.id})."
+                )
+            )
+            
+            if val_to_search < node.value:
+                node.left = delete_node(node.left, id_to_find, val_to_search)
+                return node
+            elif val_to_search > node.value:
+                node.right = delete_node(node.right, id_to_find, val_to_search)
+                return node
+
+            else:
+
+                if node.id != id_to_find:
+                    node.right = delete_node(node.right, id_to_find, val_to_search)
+                    return node
+                
+                timeline.append(
+                    TreeStep(
+                        nodes=get_layout(),
+                        highlighted_nodes=list(search_path),
+                        mutated_nodes=[node.id],  # Highlight exactly the target instance node red
+                        action_description=f"Target element matched on unique instance ID '{node.id}'. Executing deletion structural routines."
+                    )
+                )
+
+                if node.left is None:
+                    action_text = (
+                        f"Node {node.value} is a leaf node. Severing parent pointer reference."
+                        if node.right is None else
+                        f"Node {node.value} has a single right child subtree. Advancing subtree up to parent branch link."
+                    ) 
+                    timeline.append(
+                        TreeStep(
+                            nodes=get_layout(),
+                            highlighted_nodes=list(search_path),
+                            mutated_nodes=[node.id],
+                            action_description=action_text
+                        )
+                    )
+
+                    return node.right
+
+                elif node.right is None:
+                    timeline.append(
+                        TreeStep(
+                            nodes=get_layout(),
+                            highlighted_nodes=list(search_path),
+                            mutated_nodes=[node.id],
+                            action_description=f"Node {node.value} has a single left child subtree. Advancing subtree up to parent branch link."
+                        )
+                    )
+
+                    return node.left
+
+                else:
+                    timeline.append(
+                        TreeStep(
+                            nodes=get_layout(),
+                            highlighted_nodes=list(search_path),
+                            mutated_nodes=[node.id],
+                            action_description=f"Node has two child vectors. Tracking In-Order Successor (smallest node in right branch)."
+                        )
+                    )
+
+                    successor = node.right
+                    successor_path = [node.id]
+
+                    while successor.left is not None:
+                        successor = successor.left
+                        successor_path.append(successor.id)
+
+                        timeline.append(
+                            TreeStep(
+                                nodes=get_layout(),
+                                highlighted_nodes=list(search_path) + successor_path,
+                                mutated_nodes=[],
+                                action_description=f"Crawling left to find successor boundary. Checking node {successor.value}."
+                            )
+                        )
+                    timeline.append(
+                        TreeStep(
+                            nodes=get_layout(),
+                            highlighted_nodes=list(search_path) + [successor.id],
+                            mutated_nodes=[node.id, successor.id],
+                            action_description=f"Successor instance identified: Node {successor.value} (ID: {successor.id}). Copying values across."
+                        )
+                    )
+                    node.value = successor.value
+                    node.id = f"{successor.value}_swapped"
+                    timeline.append(
+                        TreeStep(
+                            nodes=get_layout(),
+                            highlighted_nodes=[node.id],
+                            mutated_nodes=[node.id],
+                            action_description=f"Value replicated. Recursively slicing out duplicated successor identity node from right child tree path."
+                        )
+                    )
+
+                    node.right = delete_node(node.right, successor.id, successor.value)
+                    return node
+
+
+        root = delete_node(root, target_id, target_value)
+
+        timeline.append(
+            TreeStep(
+                nodes=get_layout(),
+                highlighted_nodes=[],
+                mutated_nodes=[],
+                action_description=f"Deletion complete. Node '{target_id}' has been removed from the tree."
+            )
+        )
+        return timeline
+
+                    
+
+
+            
+        
+            
+            
+
+            
+
+
+
+        

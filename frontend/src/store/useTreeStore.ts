@@ -16,6 +16,7 @@ interface TreeStep{
     highlighted_nodes: string[];
     mutated_nodes: string[];
     action_description: string;
+    visited_sequence?: number[];
 }
 
 interface TreeState{
@@ -29,7 +30,7 @@ interface TreeState{
     treeType: string;
     treeAction: string;
 
-    generateTreeTimeline: (values: number[], treeType: string, treeAction: string, targetValue?: number) => Promise<void>;
+    generateTreeTimeline: (values: number[], treeType: string, treeAction: string, targetValue?: number, targetId?: string) => Promise<void>;
     nextStep: () => void;
     prevStep: () => void;
     setIsPlaying: (isPlaying: boolean) =>void;
@@ -48,11 +49,18 @@ export const useTreeStore = create<TreeState>((set,get) => ({
     treeType: 'bst',
     treeAction: 'insert',
 
-    generateTreeTimeline: async (values: number[], treeType: string, treeAction: string, targetValue?: number) => {
-    set({ inputValues: values, treeType, treeAction, isLoading: true, error: null, isPlaying: false, currentStepIndex: 0 });
+    generateTreeTimeline: async (values: number[], treeType: string, treeAction: string, targetValue?: number, targetId?: string) => {
+    // Don't overwrite the stored treeAction for transient operations (search/delete)
+    // so the user's dropdown selection (insert/traversals) is preserved
+    const stateUpdate: any = { inputValues: values, treeType, isLoading: true, error: null, isPlaying: false, currentStepIndex: 0 };
+    if (treeAction !== 'search' && treeAction !== 'delete') {
+      stateUpdate.treeAction = treeAction;
+    }
+    set(stateUpdate);
     try {
       const payload: any = { values: values };
       if (targetValue !== undefined) payload.target_value = targetValue;
+      if (targetId !== undefined) payload.target_id = targetId;
       
       const response = await axios.post(`http://127.0.0.1:8000/api/v1/tree/${treeType}-${treeAction}`, payload);
       set({ timeline: response.data.timeline, isLoading: false });
