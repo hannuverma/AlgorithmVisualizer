@@ -17,25 +17,46 @@ def run_tree_operation(tree_type: str, action: str, payload: TreeRequest):
             engine = AVLEngine
         else:
             raise ValueError(f"Unsupported tree type: {tree_type}")
-
-        if action == "insert":
-            timeline = engine.bst_insertion_pipeline(payload.values)
-        elif action == "search":
-            timeline = engine.bst_search(payload.values, payload.target_value)
-        elif action == "inorder":
-            timeline = engine.inorder_traversal(payload.values)
-        elif action == "preorder":
-            timeline = engine.preorder_traversal(payload.values)
-        elif action == "postorder":
-            timeline = engine.postorder_traversal(payload.values)
-        elif action == "levelorder":
-            timeline = engine.level_order_traversal(payload.values)
-        elif action == "delete":
-            if not payload.target_id:
-                raise ValueError("target_id must be provided for deletion.")
-            timeline = engine.delete_bst_node(payload.values, payload.target_id)   
-        else:
-            raise ValueError(f"Unsupported tree action: {action}")
+        
+        if tree_type == "bst":
+            if action == "insert":
+                timeline = engine.bst_insertion_pipeline(payload.values)
+            elif action == "search":
+                timeline = engine.bst_search(payload.values, payload.target_value)
+            elif action == "inorder":
+                timeline = engine.inorder_traversal(payload.values)
+            elif action == "preorder":
+                timeline = engine.preorder_traversal(payload.values)
+            elif action == "postorder":
+                timeline = engine.postorder_traversal(payload.values)
+            elif action == "levelorder":
+                timeline = engine.level_order_traversal(payload.values)
+            elif action == "delete":
+                if not payload.target_id:
+                    raise ValueError("target_id must be provided for deletion.")
+                timeline = engine.delete_bst_node(payload.values, payload.target_id)   
+            else:
+                raise ValueError(f"Unsupported tree action: {action}")
+        
+        elif tree_type == "avl":
+            if action == "insert":
+                timeline = engine.avl_insertion_pipeline(payload.values)
+            elif action == "search":
+                timeline = TreeEngine.bst_search(payload.values, payload.target_value)
+            elif action == "inorder":
+                timeline = TreeEngine.inorder_traversal(payload.values)
+            elif action == "preorder":
+                timeline = TreeEngine.preorder_traversal(payload.values)
+            elif action == "postorder":
+                timeline = TreeEngine.postorder_traversal(payload.values)
+            elif action == "levelorder":
+                timeline = TreeEngine.level_order_traversal(payload.values)
+            elif action == "delete":
+                if not payload.target_id:
+                    raise ValueError("target_id must be provided for deletion.")
+                timeline = engine.avl_deletion_pipeline(payload.values, payload.target_id)   
+            else:
+                raise ValueError(f"Unsupported tree action: {action}")
 
         return TreeResponse(
             algorithm=f"{tree_type}_{action}",

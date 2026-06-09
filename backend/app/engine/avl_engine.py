@@ -1,6 +1,6 @@
 from typing import List, Optional
 from app.schemas.trees import TreeStep, TreeNodeSnapshot
-from app.engines.tree_engine import TreeEngine
+from app.engine.tree_engine import TreeEngine
 
 
 class AVLTreeNode:
@@ -27,7 +27,7 @@ class AVLEngine:
         return cls.get_height(node.left) - cls.get_height(node.right)
     
     @classmethod
-    def get_layout(cls, root: Optional[AVLTreeNode]) -> List[TreeNodeSnapshot]:
+    def _get_layout(cls, root: Optional[AVLTreeNode]) -> List[TreeNodeSnapshot]:
         return TreeEngine._calculate_coordinates(root, depth=1, counter=[0])
 
     @classmethod
@@ -48,7 +48,7 @@ class AVLEngine:
 
         y.height = 1 + max(cls.get_height(y.left), cls.get_height(y.right))
         x.height = 1 + max(cls.get_height(x.left), cls.get_height(x.right))
-        root_container[0] = x
+
         timeline.append(TreeStep(
             nodes=cls._get_layout(root_container[0]),
             highlighted_nodes=[x.id],
@@ -75,8 +75,6 @@ class AVLEngine:
         x.height = max(cls.get_height(x.left), cls.get_height(x.right)) + 1
         y.height = max(cls.get_height(y.left), cls.get_height(y.right)) + 1
 
-        root_container[0] = y
-
         timeline.append(TreeStep(
             nodes=cls._get_layout(root_container[0]),
             highlighted_nodes=[y.id],
@@ -90,7 +88,7 @@ class AVLEngine:
     @classmethod
     def balance_node(cls, node:Optional[AVLTreeNode], timeline: List[TreeStep], root_container: list) -> AVLTreeNode:
 
-        node_height= 1 + max(cls.get_height(node.left), cls.get_height(node.right))
+        node.height = 1 + max(cls.get_height(node.left), cls.get_height(node.right))
         balance = cls.get_balance_factor(node)
 
         def capture_frame(action, target_ids=[]):
@@ -132,7 +130,7 @@ class AVLEngine:
         def insert(node: Optional[AVLTreeNode], key: int, id: str) -> AVLTreeNode:
 
             if node is None:
-                new_leaf = AVLNode(unique_id, key)
+                new_leaf = AVLTreeNode(key, id)
 
                 if root_container[0] is None:
                     root_container[0] = new_leaf
@@ -150,8 +148,8 @@ class AVLEngine:
             else:
                 node.right = insert(node.right, key, id)
 
-            root_container[0] = cls.balance_node(node, key, timeline, root_container)
-            return root_container[0]
+            node = cls.balance_node(node, timeline, root_container)
+            return node
 
         for val in values:
             occurrence= value_count.get(val, 0)
@@ -171,66 +169,6 @@ class AVLEngine:
             highlighted_nodes=[],
             mutated_nodes=[],
             action_description="AVL Tree generation pipeline complete. All allocations balanced successfully."
-        ))
-        return timeline
-
-    @classmethod
-    def avl_deletion_pipeline(cls, values: List[int]) -> List[TreeStep]:
-        timeline: List[TreeStep] = []
-        root: Optional[AVLTreeNode] = None
-        root_container = [None]
-        value_count = {}
-        
-        def delete(node: Optional[AVLTreeNode], key: int, id: str) -> AVLTreeNode:
-
-            if node is None:
-                return node
-
-            timeline.append(TreeStep(
-                nodes=cls._get_layout(root_container[0]),
-                highlighted_nodes=[node.id],
-                mutated_nodes=[],
-                action_description=f"AVL Delete: Comparing key {key} against node {node.value}."
-            ))
-
-            if key < node.value:
-                node.left = delete(node.left, key, id)
-            elif key > node.value:
-                node.right = delete(node.right, key, id)
-            else:
-                if node.left is None:
-                    temp = node.right
-                    node = None
-                    return temp
-                elif node.right is None:
-                    temp = node.left
-                    node = None
-                    return temp
-                temp = cls._get_min_value_node(node.right)
-                node.value = temp.value
-                node.right = delete(node.right, temp.value, id)
-
-            root_container[0] = cls.balance_node(node, key, timeline, root_container)
-            return root_container[0]
-
-        for val in values:
-            occurrence= value_count.get(val, 0)
-            value_count[val] = occurrence + 1
-            unique_id = f"{val}_{occurrence}"
-            timeline.append(TreeStep(
-                nodes=cls._get_layout(root_container[0]),
-                highlighted_nodes=[],
-                mutated_nodes=[],
-                action_description=f"Injecting key {val} into the AVL compilation framework pipeline."
-            ))
-
-            root = delete(root, val, unique_id)
-            root_container[0] = root
-        timeline.append(TreeStep(
-            nodes=cls._get_layout(root_container[0]),
-            highlighted_nodes=[],
-            mutated_nodes=[],
-            action_description="AVL Tree deletion pipeline complete. All allocations balanced successfully."
         ))
         return timeline
 
