@@ -21,7 +21,7 @@ export const ConsoleLayer: React.FC<ConsoleLayerProps> = ({ timeline, currentSte
   const logs = timeline.slice(0, currentStepIndex + 1);
 
   return (
-    <div className="w-full mt-6 h-[120px]">
+    <div className="w-full h-[120px]">
       {/* Raw Terminal Logs */}
       <div 
         ref={containerRef}

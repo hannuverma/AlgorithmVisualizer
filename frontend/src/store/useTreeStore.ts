@@ -29,7 +29,7 @@ interface TreeState{
     treeType: string;
     treeAction: string;
 
-    generateTreeTimeline: (values: number[], treeType: string, treeAction: string) => Promise<void>;
+    generateTreeTimeline: (values: number[], treeType: string, treeAction: string, targetValue?: number) => Promise<void>;
     nextStep: () => void;
     prevStep: () => void;
     setIsPlaying: (isPlaying: boolean) =>void;
@@ -48,12 +48,13 @@ export const useTreeStore = create<TreeState>((set,get) => ({
     treeType: 'bst',
     treeAction: 'insert',
 
-    generateTreeTimeline: async (values: number[], treeType: string, treeAction: string) => {
+    generateTreeTimeline: async (values: number[], treeType: string, treeAction: string, targetValue?: number) => {
     set({ inputValues: values, treeType, treeAction, isLoading: true, error: null, isPlaying: false, currentStepIndex: 0 });
     try {
-      const response = await axios.post(`http://127.0.0.1:8000/api/v1/tree/${treeType}-${treeAction}`, {
-        values: values
-      });
+      const payload: any = { values: values };
+      if (targetValue !== undefined) payload.target_value = targetValue;
+      
+      const response = await axios.post(`http://127.0.0.1:8000/api/v1/tree/${treeType}-${treeAction}`, payload);
       set({ timeline: response.data.timeline, isLoading: false });
     } catch (err: any) {
       set({ 

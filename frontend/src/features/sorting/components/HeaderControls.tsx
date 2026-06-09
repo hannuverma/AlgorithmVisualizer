@@ -50,6 +50,9 @@ export const HeaderControls: React.FC = () => {
     if (activeView === 'sorting') {
       generateSortingTimeline(algoToUse, newArray);
     } else if (activeView === 'trees') {
+      // By default, if they click generate, we probably want to trigger an insertion to build the tree.
+      // But if they have a traversal selected, they might want to traverse. 
+      // I will send the action value so the backend can build AND traverse.
       generateTreeTimeline(newArray, selectedTreeType, selectedTreeAction);
     }
   };
@@ -144,8 +147,12 @@ export const HeaderControls: React.FC = () => {
                   className="bg-[#0f1115] text-slate-100 border border-slate-800 rounded px-3 py-1 text-[13px] font-mono focus:outline-none focus:border-blue-500 disabled:opacity-50"
                 >
                   <option value="insert">Insert</option>
-                  <option value="delete">Delete</option>
-                  <option value="search">Search</option>
+                  <optgroup label="Traversals">
+                    <option value="inorder">InOrder Traverse</option>
+                    <option value="preorder">PreOrder Traverse</option>
+                    <option value="postorder">PostOrder Traverse</option>
+                    <option value="levelorder">LevelOrder Traverse</option>
+                  </optgroup>
                 </select>
               </div>
             </>

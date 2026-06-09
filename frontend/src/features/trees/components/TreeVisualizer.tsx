@@ -148,6 +148,25 @@ export const TreeVisualizer: React.FC = () => {
             const parent = nodes.find(n => n.id === node.parent_id);
             if (!parent) return null;
 
+            const isChildActive = highlighted_nodes.includes(node.id) || mutated_nodes.includes(node.id);
+            const isParentActive = highlighted_nodes.includes(parent.id) || mutated_nodes.includes(parent.id);
+            const isActiveEdge = isChildActive && isParentActive;
+
+            let edgeColor = "#334155"; // slate-700
+            let edgeWidth = "2";
+            let zIndex = 0;
+            
+            if (isActiveEdge) {
+              zIndex = 5;
+              if (mutated_nodes.includes(node.id)) {
+                edgeColor = "#10b981"; // emerald-500
+                edgeWidth = "3";
+              } else {
+                edgeColor = "#f59e0b"; // amber-500
+                edgeWidth = "3";
+              }
+            }
+
             return (
               <line
                 key={`edge-${node.id}-${parent.id}`}
@@ -155,9 +174,10 @@ export const TreeVisualizer: React.FC = () => {
                 y1={node.y + NODE_RADIUS}
                 x2={parent.x + NODE_RADIUS}
                 y2={parent.y + NODE_RADIUS}
-                stroke="#334155" // slate-700
-                strokeWidth="2"
+                stroke={edgeColor}
+                strokeWidth={edgeWidth}
                 className="transition-all duration-300"
+                style={{ zIndex }}
               />
             );
           })}
