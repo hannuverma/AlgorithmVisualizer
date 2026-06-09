@@ -84,7 +84,71 @@ class AVLEngine:
         
         return y
 
-        
+    @classmethod
+    def _rotate_right_silent(cls, y: AVLTreeNode) -> AVLTreeNode:
+        x = y.left
+        T2 = x.right
+        x.right = y
+        y.left = T2
+        y.height = 1 + max(cls.get_height(y.left), cls.get_height(y.right))
+        x.height = 1 + max(cls.get_height(x.left), cls.get_height(x.right))
+        return x
+
+    @classmethod
+    def _rotate_left_silent(cls, x: AVLTreeNode) -> AVLTreeNode:
+        y = x.right
+        T2 = y.left
+        y.left = x
+        x.right = T2
+        x.height = 1 + max(cls.get_height(x.left), cls.get_height(x.right))
+        y.height = 1 + max(cls.get_height(y.left), cls.get_height(y.right))
+        return y
+
+    @classmethod
+    def _build_tree(cls, values: List[int]) -> Optional[AVLTreeNode]:
+        """Silently build a balanced AVL tree (no timeline logging)."""
+        if not values:
+            return None
+
+        value_count = {}
+        root: Optional[AVLTreeNode] = None
+
+        def recursive_insert(node: Optional[AVLTreeNode], key: int, unique_id: str) -> AVLTreeNode:
+            if not node:
+                return AVLTreeNode(value=key, node_id=unique_id)
+
+            if key < node.value:
+                node.left = recursive_insert(node.left, key, unique_id)
+            else:
+                node.right = recursive_insert(node.right, key, unique_id)
+
+            node.height = 1 + max(cls.get_height(node.left), cls.get_height(node.right))
+            balance = cls.get_balance_factor(node)
+
+            if balance > 1:
+                if cls.get_balance_factor(node.left) >= 0:
+                    return cls._rotate_right_silent(node)
+                else:
+                    node.left = cls._rotate_left_silent(node.left)
+                    return cls._rotate_right_silent(node)
+
+            if balance < -1:
+                if cls.get_balance_factor(node.right) <= 0:
+                    return cls._rotate_left_silent(node)
+                else:
+                    node.right = cls._rotate_right_silent(node.right)
+                    return cls._rotate_left_silent(node)
+
+            return node
+
+        for val in values:
+            occurrence = value_count.get(val, 0)
+            value_count[val] = occurrence + 1
+            unique_id = f"{val}_{occurrence}"
+            root = recursive_insert(root, val, unique_id)
+
+        return root
+    
     @classmethod
     def balance_node(cls, node:Optional[AVLTreeNode], timeline: List[TreeStep], root_container: list) -> AVLTreeNode:
 
@@ -171,8 +235,80 @@ class AVLEngine:
             action_description="AVL Tree generation pipeline complete. All allocations balanced successfully."
         ))
         return timeline
-
-
-
             
-            
+    @classmethod
+    def avl_search(cls, values: List[int], target: int) ->List[TreeStep]:
+
+        if not values:
+            return []
+
+        timeline: List[TreeStep] = []
+        root = cls._build_tree(values)
+        static_nodes = cls._get_layout(root)
+        current = root
+        timeline.append(
+            TreeStep(
+                nodes=static_nodes,
+                highlighted_nodes=[],
+                mutated_nodes=[],
+                action_description=f"Starting search for value {target}."
+            )
+        )
+
+        visited_path = []
+
+        while current is not None:
+
+
+            visited_path.append(current.id)
+            timeline.append(
+                TreeStep(
+                    nodes=static_nodes,
+                    highlighted_nodes=list(visited_path),
+                    mutated_nodes=[],
+                    action_description=f"Comparing search key {target} against current node {current.value}."
+                )
+            )
+            if current.value == target:
+                timeline.append(
+                    TreeStep(
+                        nodes=static_nodes,
+                        highlighted_nodes=list(visited_path),
+                        mutated_nodes=[current.id],
+                        action_description=f"Success! Found target node with value {current.value}."
+                    )
+                )
+                break
+
+            elif current.value > target:
+                timeline.append(
+                    TreeStep(
+                        nodes=static_nodes,
+                        highlighted_nodes=list(visited_path),
+                        mutated_nodes=[],
+                        action_description=f"Target {target} < {current.value}. Moving to LEFT child."
+                    )
+                )
+                current = current.left
+
+            else:
+                timeline.append(
+                    TreeStep(
+                        nodes=static_nodes,
+                        highlighted_nodes=list(visited_path),
+                        mutated_nodes=[],
+                        action_description=f"Target {target} > {current.value}. Moving to RIGHT child."
+                    )
+                )
+                current = current.right
+
+        if current is None:
+            timeline.append(
+                TreeStep(
+                    nodes=static_nodes,
+                    highlighted_nodes=list(visited_path),
+                    mutated_nodes=[],
+                    action_description=f"Reached empty leaf. Target {target} not found in the tree."
+                )
+            )
+        return timeline

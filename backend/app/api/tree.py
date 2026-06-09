@@ -42,7 +42,7 @@ def run_tree_operation(tree_type: str, action: str, payload: TreeRequest):
             if action == "insert":
                 timeline = engine.avl_insertion_pipeline(payload.values)
             elif action == "search":
-                timeline = TreeEngine.bst_search(payload.values, payload.target_value)
+                timeline = engine.avl_search(payload.values, payload.target_value)
             elif action == "inorder":
                 timeline = TreeEngine.inorder_traversal(payload.values)
             elif action == "preorder":
