@@ -261,7 +261,7 @@ class TreeEngine:
         root = cls._build_tree(values)
         static_nodes = cls._get_layout(root)
 
-        visited_sequence : List[TreeStep] = []
+        visited_sequence : List[str] = []
 
         def traverse(node : Optional[BSTNode] = None):
 
@@ -280,7 +280,7 @@ class TreeEngine:
 
             traverse(node.left)
 
-            visited_sequence.append(node.value)
+            visited_sequence.append(node.id)
             timeline.append(
                 TreeStep(
                     nodes=static_nodes,
@@ -323,13 +323,13 @@ class TreeEngine:
         timeline: List[TreeStep] = []
         root = cls._build_tree(values)
         static_nodes = cls._get_layout(root)
-        visited_sequence: List[TreeStep] = []
+        visited_sequence: List[str] = []
 
         def traverse(node: Optional[BSTNode] = None):
             if not node:
                 return
 
-            visited_sequence.append(node.value)
+            visited_sequence.append(node.id)
             timeline.append(
                 TreeStep(
                     nodes=static_nodes,
@@ -382,7 +382,7 @@ class TreeEngine:
         timeline: List[TreeStep] = []
         root = cls._build_tree(values)
         static_nodes = cls._get_layout(root)
-        visited_sequence: List[TreeStep] = []
+        visited_sequence: List[str] = []
 
         def traverse(node: Optional[BSTNode] = None):
             if not node:
@@ -410,7 +410,7 @@ class TreeEngine:
             )
             traverse(node.right)
 
-            visited_sequence.append(node.value)
+            visited_sequence.append(node.id)
             timeline.append(
                 TreeStep(
                     nodes=static_nodes,
@@ -445,7 +445,7 @@ class TreeEngine:
         static_nodes = cls._get_layout(root)
         
         # FIX 1: Track actual integer node values printed, not TreeSteps
-        visited_sequence: List[int] = []
+        visited_sequence: List[str] = []
 
         if not root:
             return timeline
@@ -474,7 +474,7 @@ class TreeEngine:
                 node = queue.popleft()
 
                 # Process/Print node item value updates
-                visited_sequence.append(node.value)
+                visited_sequence.append(node.id)
                 
                 timeline.append(
                     TreeStep(

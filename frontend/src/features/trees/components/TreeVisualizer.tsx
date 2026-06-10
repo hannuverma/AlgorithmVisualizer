@@ -194,7 +194,7 @@ export const TreeVisualizer: React.FC = () => {
         {nodes.map(node => {
           const isHighlighted = highlighted_nodes.includes(node.id);
           const isMutated = mutated_nodes.includes(node.id);
-          const isVisited = visitedSequence.includes(node.value) && !isMutated && !isHighlighted;
+          const isVisited = visitedSequence.includes(node.id) && !isMutated && !isHighlighted;
 
           let borderClass = 'border-slate-600';
           let bgClass = 'bg-slate-800';

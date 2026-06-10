@@ -148,9 +148,10 @@ export const App: React.FC = () => {
                   <div className="glass-card w-full p-5 flex flex-col gap-2">
                     <h3 className="text-[13px] font-mono text-slate-400 border-b border-slate-800 pb-2">Output Sequence</h3>
                     <div className="flex flex-wrap gap-2 mt-2 min-h-[40px]">
-                      {treeStore.timeline[treeStore.currentStepIndex]?.visited_sequence?.map((val: number, idx: number) => {
+                      {treeStore.timeline[treeStore.currentStepIndex]?.visited_sequence?.map((id: string, idx: number) => {
+                        const val = id.split('_')[0];
                         return (
-                          <div key={idx} className="w-8 h-8 flex items-center justify-center font-mono text-xs rounded border transition-colors bg-amber-900/50 border-amber-500 text-amber-200 shadow-[0_0_8px_rgba(245,158,11,0.4)]">
+                          <div key={idx} className="w-8 h-8 flex items-center justify-center font-mono text-xs rounded border transition-colors bg-emerald-900/50 border-emerald-500 text-emerald-200 shadow-[0_0_8px_rgba(16,185,129,0.4)]">
                             {val}
                           </div>
                         )

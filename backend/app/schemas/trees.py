@@ -23,7 +23,7 @@ class TreeStep(BaseModel):
     highlighted_nodes: List[str] = Field(default_factory=list, description="List of IDs for all the highlighted nodes")
     mutated_nodes: List[str] = Field(default_factory=list, description="Nodes actively being modified, inserted, or rebalanced")
     action_description: str = Field(..., description="Description of the current action")
-    visited_sequence: List[int] = Field(default_factory=list, description="The sequential order of values visited/printed so far")
+    visited_sequence: List[str] = Field(default_factory=list, description="The sequential order of nodes visited/printed so far")
 
 
 class TreeRequest(BaseModel):
