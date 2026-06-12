@@ -144,7 +144,6 @@ export const HeaderControls: React.FC = () => {
                 >
                   <option value="bst">Binary Search Tree</option>
                   <option value="avl">AVL Tree</option>
-                  <option value="red-black">Red-Black Tree</option>
                 </select>
               </div>
 

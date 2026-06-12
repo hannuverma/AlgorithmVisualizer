@@ -61,6 +61,7 @@ export const useSortingPlayback = () =>{
             array: isCountingSort ? lastStep.array : finalArray,
             highlighted_indices: [],
             swapped_indices: [],
+            sorted_indices: Array.from({ length: totalElements }, (_, index) => index),
             action_description: "Array verified successfully. System operational.",
             ...countingSortFields
         });

@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { useMazeStore } from '../../../store/useMazeStore';
+import { audioEngine } from '../../../utils/AudioEngine';
 
 export const useMazePlayback = () => {
     const { 
@@ -18,32 +19,15 @@ export const useMazePlayback = () => {
             intervalId = setInterval(() => {
                 nextStep();
                 
-                // Play a tiny tick sound for immersion
-                try {
-                    const AudioContext = window.AudioContext || (window as any).webkitAudioContext;
-                    if (AudioContext) {
-                        const ctx = new AudioContext();
-                        const osc = ctx.createOscillator();
-                        const gain = ctx.createGain();
-                        
-                        // Different pitch based on whether it's generation or pathfinding
-                        // Generation is usually faster and we can make it a low thud
-                        // Pathfinding is higher pitch
-                        osc.type = 'sine';
-                        osc.frequency.setValueAtTime(300, ctx.currentTime);
-                        osc.frequency.exponentialRampToValueAtTime(100, ctx.currentTime + 0.05);
-                        
-                        gain.gain.setValueAtTime(0.02, ctx.currentTime);
-                        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.05);
-                        
-                        osc.connect(gain);
-                        gain.connect(ctx.destination);
-                        
-                        osc.start();
-                        osc.stop(ctx.currentTime + 0.05);
+                const nextStepData = timeline[currentStepIndex + 1] || timeline[currentStepIndex];
+                if (nextStepData) {
+                    const maxVal = useMazeStore.getState().rows * useMazeStore.getState().cols;
+                    let pitchVal = nextStepData.highlighted_cells.length * 2;
+                    if (nextStepData.path_cells.length > 0) {
+                        pitchVal = nextStepData.path_cells.length * 5;
                     }
-                } catch (e) {
-                    // Ignore audio errors
+                    const toneDuration = Math.min(0.05, playbackSpeed / 1000);
+                    audioEngine.playTone(pitchVal, maxVal || 100, toneDuration);
                 }
                 
             }, playbackSpeed);

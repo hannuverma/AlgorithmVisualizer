@@ -19,6 +19,7 @@ import { GraphMetrics } from './features/graphs/components/GraphMetrics';
 import { useMazeStore } from './store/useMazeStore';
 import { useMazePlayback } from './features/mazes/hooks/useMazePlayback';
 import { MazeVisualizer } from './features/mazes/components/MazeVisualizer';
+import { MazeMetrics } from './features/mazes/components/MazeMetrics';
 
 export const App: React.FC = () => {
   const { activeView } = useAppStore();
@@ -260,6 +261,7 @@ export const App: React.FC = () => {
                 />}
               </div>
               <div className="lg:col-span-1 flex flex-col gap-6">
+                <MazeMetrics />
                 <ConsoleLayer timeline={mazeStore.timeline} currentStepIndex={mazeStore.currentStepIndex} />
               </div>
             </div>

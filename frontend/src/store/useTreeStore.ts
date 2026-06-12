@@ -16,7 +16,7 @@ interface TreeStep{
     highlighted_nodes: string[];
     mutated_nodes: string[];
     action_description: string;
-    visited_sequence?: number[];
+    visited_sequence?: string[];
 }
 
 interface TreeState{

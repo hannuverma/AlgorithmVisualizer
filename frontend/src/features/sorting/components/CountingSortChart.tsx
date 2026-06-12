@@ -64,8 +64,13 @@ export const CountingSortChart: React.FC = () => {
               borderColor = 'border-rose-500 shadow-[0_0_8px_rgba(244,63,94,0.5)] z-10';
               fillColor = 'bg-rose-500/80';
             } else if (isHighlight) {
-              borderColor = 'border-amber-400 shadow-[0_0_8px_rgba(251,191,36,0.5)] z-10';
-              fillColor = 'bg-amber-400/80';
+              if (action.includes("Verifying")) {
+                  borderColor = 'border-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.6)] z-10';
+                  fillColor = 'bg-emerald-400/80';
+              } else {
+                  borderColor = 'border-amber-400 shadow-[0_0_8px_rgba(251,191,36,0.5)] z-10';
+                  fillColor = 'bg-amber-400/80';
+              }
             }
 
             return (
@@ -109,8 +114,8 @@ export const CountingSortChart: React.FC = () => {
           "Original Array (Input)", 
           originalArray, 
           maxVal, 
-          currentStep.highlighted_indices || [], 
-          [], 
+          action.includes("Verifying") ? [] : (currentStep.highlighted_indices || []), 
+          action.includes("Verifying") ? [] : [], 
           undefined,
           true
         )}
@@ -131,7 +136,7 @@ export const CountingSortChart: React.FC = () => {
           "Sorted Array (Output)", 
           sortedArray, 
           maxVal, 
-          [], 
+          action.includes("Verifying") ? (currentStep.highlighted_indices || []) : [], 
           currentStep.swapped_indices || [], 
           currentStep.sorted_indices,
           true
