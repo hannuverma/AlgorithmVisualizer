@@ -7,7 +7,7 @@ class Settings(BaseSettings):
     API_V1_STR: str = "/api/v1"
 
     ALLOWED_ORIGINS: list[str] = Field(
-        default=["http://localhost:5173", "http://127.0.0.1:5173"],
+        default=["http://localhost:5173", "http://127.0.0.1:5173", "https://algorithm-visualizer-theta-steel.vercel.app"],
         description="List of origins allowed to cross-site HTTP requests"
     )
 
