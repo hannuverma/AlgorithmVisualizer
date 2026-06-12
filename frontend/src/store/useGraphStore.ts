@@ -77,7 +77,7 @@ export const useGraphStore = create<GraphState>((set, get) => ({
         set({ isLoading: true, error: null, isPlaying: false, currentStepIndex: 0, startNodeId: null, endNodeId: null });
 
         try {
-            const response = await axios.post(`http://127.0.0.1:8000/api/v1/graphs/generate`, {
+            const response = await axios.post(`https://algorithmvisualizer-90xk.onrender.com/api/v1/graphs/generate`, {
                 num_nodes: numNodes,
                 edge_probability: edgeProbability,
                 width: 600.0,
@@ -117,7 +117,7 @@ export const useGraphStore = create<GraphState>((set, get) => ({
             if (selectedGraphAlgorithm === 'dfs') endpoint = '/api/v1/graphs/traverse/dfs';
             if (selectedGraphAlgorithm === 'dijkstra') endpoint = '/api/v1/graphs/path/dijkstra';
 
-            const response = await axios.post(`http://127.0.0.1:8000${endpoint}`, {
+            const response = await axios.post(`https://algorithmvisualizer-90xk.onrender.com${endpoint}`, {
                 nodes: currentGraph.nodes,
                 edges: currentGraph.edges,
                 start_node_id: startNodeId,

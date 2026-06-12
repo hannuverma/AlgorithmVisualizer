@@ -61,7 +61,7 @@ export const useMazeStore = create<MazeState>((set, get) => ({
         set({ isLoading: true, error: null, isPlaying: false, currentStepIndex: 0 });
 
         try {
-            const response = await axios.post(`http://127.0.0.1:8000/api/v1/mazes/generate`, {
+            const response = await axios.post(`https://algorithmvisualizer-90xk.onrender.com/api/v1/mazes/generate`, {
                 rows,
                 cols
             });
@@ -105,7 +105,7 @@ export const useMazeStore = create<MazeState>((set, get) => ({
         set({ isLoading: true, error: null, isPlaying: false, currentStepIndex: 0 });
 
         try {
-            const response = await axios.post(`http://127.0.0.1:8000/api/v1/mazes/path/${selectedAlgorithm}`, {
+            const response = await axios.post(`https://algorithmvisualizer-90xk.onrender.com/api/v1/mazes/path/${selectedAlgorithm}`, {
                 grid: currentMaze.grid,
                 start_r,
                 start_c,
