@@ -13,7 +13,7 @@ export const useMazePlayback = () => {
     } = useMazeStore();
 
     useEffect(() => {
-        let intervalId: NodeJS.Timeout;
+        let intervalId: ReturnType<typeof setInterval>;
 
         if (isPlaying && currentStepIndex < timeline.length - 1) {
             intervalId = setInterval(() => {

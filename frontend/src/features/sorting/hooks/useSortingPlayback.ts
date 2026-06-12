@@ -10,10 +10,7 @@ export const useSortingPlayback = () =>{
         isPlaying,
         playbackSpeed,
         setIsPlaying,
-        nextStep,
-        setCurrentStepIndex,
-        setTimeline,
-        setCurrentOpsCount
+        nextStep
     } = useVisualizerStore();
 
     const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);

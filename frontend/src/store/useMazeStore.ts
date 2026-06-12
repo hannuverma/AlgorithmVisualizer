@@ -2,8 +2,8 @@ import { create } from 'zustand';
 import axios from 'axios';
 
 export interface MazeCell {
-    r: int;
-    c: int;
+    r: number;
+    c: number;
     is_wall: boolean;
     is_start: boolean;
     is_end: boolean;

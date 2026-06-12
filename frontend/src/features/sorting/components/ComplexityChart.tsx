@@ -1,6 +1,6 @@
 // frontend/src/features/sorting/components/ComplexityChart.tsx
 import React from 'react';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { useVisualizerStore } from '../../../store/useVisualizerStore';
 
 export const ComplexityChart: React.FC = () => {

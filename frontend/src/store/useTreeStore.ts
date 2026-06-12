@@ -38,7 +38,7 @@ interface TreeState{
     resetPlayback: () => void;
 } 
 
-export const useTreeStore = create<TreeState>((set,get) => ({
+export const useTreeStore = create<TreeState>((set) => ({
     inputValues: [],
     timeline:[],
     currentStepIndex: 0,

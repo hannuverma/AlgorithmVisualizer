@@ -31,8 +31,6 @@ export const generateRandomGraph = (
     // Generate nodes
     for (let i = 0; i < numNodes; i++) {
         const id = i < 26 ? String.fromCharCode(65 + i) : `N${i}`; // A, B, C...
-        const margin = 50;
-        
         // Random placement in 3D space centered at origin
         const halfW = width / 2;
         const halfH = height / 2;

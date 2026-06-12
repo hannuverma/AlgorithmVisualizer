@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect, MouseEvent as ReactMouseEvent } from 'react';
+import React, { useRef, useState, useEffect, type MouseEvent as ReactMouseEvent } from 'react';
 import { useTreeStore } from '../../../store/useTreeStore';
 
 export const TreeVisualizer: React.FC = () => {
