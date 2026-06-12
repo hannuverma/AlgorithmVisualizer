@@ -3,13 +3,17 @@ import React, { useState } from 'react';
 import { useVisualizerStore } from '../../../store/useVisualizerStore';
 import { useTreeStore } from '../../../store/useTreeStore';
 import { useAppStore } from '../../../store/useAppStore';
+import { useGraphStore } from '../../../store/useGraphStore';
+import { useMazeStore } from '../../../store/useMazeStore';
 
 export const HeaderControls: React.FC = () => {
   const { activeView, setActiveView } = useAppStore();
   const { generateSortingTimeline, isLoading: isSortingLoading } = useVisualizerStore();
   const { generateTreeTimeline, isLoading: isTreeLoading } = useTreeStore();
+  const { generateGraphTimeline, runGraphAlgorithm, isLoading: isGraphLoading, numNodes, setNumNodes, edgeProbability, setEdgeProbability, selectedGraphAlgorithm, setSelectedGraphAlgorithm, startNodeId, endNodeId } = useGraphStore();
+  const { generateMaze, runPathfinder, isLoading: isMazeLoading, rows, setRows, cols, setCols, selectedAlgorithm: mazeAlgo, setSelectedAlgorithm: setMazeAlgo } = useMazeStore();
   
-  const isLoading = activeView === 'sorting' ? isSortingLoading : isTreeLoading;
+  const isLoading = activeView === 'sorting' ? isSortingLoading : (activeView === 'trees' ? isTreeLoading : (activeView === 'graphs' ? isGraphLoading : isMazeLoading));
   const [selectedAlgo, setSelectedAlgo] = useState('bubble-sort');
   const [selectedTreeType, setSelectedTreeType] = useState('bst');
   const [selectedTreeAction, setSelectedTreeAction] = useState('insert');
@@ -51,6 +55,10 @@ export const HeaderControls: React.FC = () => {
       generateSortingTimeline(algoToUse, newArray);
     } else if (activeView === 'trees') {
       generateTreeTimeline(newArray, selectedTreeType, selectedTreeAction);
+    } else if (activeView === 'graphs') {
+      generateGraphTimeline(numNodes, edgeProbability);
+    } else if (activeView === 'telemetry') { // Reuse telemetry string for mazes to save refactoring App activeView globally for now, or assume it's mazes
+      generateMaze(rows, cols);
     }
   };
 
@@ -94,7 +102,7 @@ export const HeaderControls: React.FC = () => {
           <TabButton label="Sorting Engines" view="sorting" />
           <TabButton label="Network Graphs" view="graphs" />
           <TabButton label="Tree Structures" view="trees" />
-          <TabButton label="Telemetry Hub" view="telemetry" />
+          <TabButton label="Maze Explorer" view="telemetry" />
         </div>
 
         {/* Controls Area */}
@@ -162,7 +170,7 @@ export const HeaderControls: React.FC = () => {
             </>
           )}
 
-          <div className="flex items-center gap-2">
+           <div className="flex items-center gap-2">
              <span className="font-mono text-[11px] text-slate-400 uppercase tracking-wider">Mode</span>
              <select
               value={inputType}
@@ -175,49 +183,142 @@ export const HeaderControls: React.FC = () => {
             </select>
           </div>
 
-          {inputType === 'random' ? (
-            <div className="flex items-center gap-2">
-              <span className="font-mono text-[11px] text-slate-400 uppercase tracking-wider">Size ({arraySize})</span>
-              <input
-                type="range"
-                min="5"
-                max="50"
-                step="1"
-                value={arraySize}
-                onChange={(e) => setArraySize(Number(e.target.value))}
-                disabled={isLoading}
-                className="w-20 h-1 bg-slate-800 rounded-full appearance-none cursor-pointer focus:outline-none [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-3 [&::-webkit-slider-thumb]:h-3 [&::-webkit-slider-thumb]:bg-blue-500 [&::-webkit-slider-thumb]:rounded-full"
-              />
-            </div>
+          {activeView === 'graphs' ? (
+            <>
+              <div className="flex items-center gap-2">
+                <span className="font-mono text-[11px] text-slate-400 uppercase tracking-wider">Nodes ({numNodes})</span>
+                <input
+                  type="range"
+                  min="3"
+                  max="50"
+                  step="1"
+                  value={numNodes}
+                  onChange={(e) => setNumNodes(Number(e.target.value))}
+                  disabled={isLoading}
+                  className="w-20 h-1 bg-slate-800 rounded-full appearance-none cursor-pointer focus:outline-none [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-3 [&::-webkit-slider-thumb]:h-3 [&::-webkit-slider-thumb]:bg-blue-500 [&::-webkit-slider-thumb]:rounded-full"
+                />
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="font-mono text-[11px] text-slate-400 uppercase tracking-wider">Density</span>
+                <select
+                  value={edgeProbability}
+                  onChange={(e) => setEdgeProbability(Number(e.target.value))}
+                  disabled={isLoading}
+                  className="bg-[#0f1115] text-slate-100 border border-slate-800 rounded px-3 py-1 text-[13px] font-mono focus:outline-none focus:border-blue-500 disabled:opacity-50"
+                >
+                  <option value={0.1}>Sparse</option>
+                  <option value={0.3}>Medium</option>
+                  <option value={0.6}>Dense</option>
+                </select>
+              </div>
+              
+              <div className="flex items-center gap-2 border-l border-slate-700 pl-4 ml-2">
+                <span className="font-mono text-[11px] text-slate-400 uppercase tracking-wider">Algorithm</span>
+                <select
+                  value={selectedGraphAlgorithm}
+                  onChange={(e) => setSelectedGraphAlgorithm(e.target.value)}
+                  disabled={isLoading}
+                  className="bg-[#0f1115] text-slate-100 border border-slate-800 rounded px-3 py-1 text-[13px] font-mono focus:outline-none focus:border-blue-500 disabled:opacity-50"
+                >
+                  <option value="bfs">BFS (Breadth-First)</option>
+                  <option value="dfs">DFS (Depth-First)</option>
+                  <option value="dijkstra">Dijkstra's (Shortest Path)</option>
+                </select>
+              </div>
+            </>
           ) : (
-            <div className="flex items-center gap-2 relative">
-              <span className="font-mono text-[11px] text-slate-400 uppercase tracking-wider">Array</span>
-              <input
-                type="text"
-                value={customArrayStr}
-                onChange={(e) => {
-                  setCustomArrayStr(e.target.value);
-                  setInputError(null);
-                }}
-                disabled={isLoading}
-                placeholder="10, 5, 20"
-                className={`w-32 bg-[#0f1115] text-slate-100 border ${inputError ? 'border-rose-500' : 'border-slate-800'} rounded px-2 py-1 text-[13px] font-mono focus:outline-none focus:border-blue-500 disabled:opacity-50`}
-              />
-              {inputError && (
-                <span className="absolute -bottom-4 left-10 text-[10px] text-rose-500 font-mono whitespace-nowrap">
-                  {inputError}
-                </span>
-              )}
-            </div>
+            inputType === 'random' ? (
+              <div className="flex items-center gap-2">
+                <span className="font-mono text-[11px] text-slate-400 uppercase tracking-wider">Size ({arraySize})</span>
+                <input
+                  type="range"
+                  min="5"
+                  max="50"
+                  step="1"
+                  value={arraySize}
+                  onChange={(e) => setArraySize(Number(e.target.value))}
+                  disabled={isLoading}
+                  className="w-20 h-1 bg-slate-800 rounded-full appearance-none cursor-pointer focus:outline-none [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-3 [&::-webkit-slider-thumb]:h-3 [&::-webkit-slider-thumb]:bg-blue-500 [&::-webkit-slider-thumb]:rounded-full"
+                />
+              </div>
+            ) : (
+              <div className="flex items-center gap-2 relative">
+                <span className="font-mono text-[11px] text-slate-400 uppercase tracking-wider">Array</span>
+                <input
+                  type="text"
+                  value={customArrayStr}
+                  onChange={(e) => {
+                    setCustomArrayStr(e.target.value);
+                    setInputError(null);
+                  }}
+                  disabled={isLoading}
+                  placeholder="10, 5, 20"
+                  className={`w-32 bg-[#0f1115] text-slate-100 border ${inputError ? 'border-rose-500' : 'border-slate-800'} rounded px-2 py-1 text-[13px] font-mono focus:outline-none focus:border-blue-500 disabled:opacity-50`}
+                />
+                {inputError && (
+                  <span className="absolute -bottom-4 left-10 text-[10px] text-rose-500 font-mono whitespace-nowrap">
+                    {inputError}
+                  </span>
+                )}
+              </div>
+            )
           )}
 
-          <button
-            onClick={() => handleGenerateArray()}
-            disabled={isLoading}
-            className="px-4 py-1.5 bg-blue-600 hover:bg-blue-500 text-white font-medium rounded text-[13px] shadow-[0_0_12px_rgba(59,130,246,0.4)] active:scale-95 transition-all disabled:opacity-50 flex items-center justify-center gap-2"
-          >
-            {isLoading ? 'Computing...' : 'Generate & Sync Data'}
-          </button>
+          {activeView === 'telemetry' && (
+            <>
+              <div className="flex items-center gap-2">
+                <span className="font-mono text-[11px] text-slate-400 uppercase tracking-wider">Size ({rows}x{cols})</span>
+                <input
+                  type="range"
+                  min="5"
+                  max="45"
+                  step="2"
+                  value={rows}
+                  onChange={(e) => {
+                    const val = Number(e.target.value);
+                    setRows(val);
+                    setCols(val); // Keep square for simplicity, could split
+                  }}
+                  disabled={isLoading}
+                  className="w-20 h-1 bg-slate-800 rounded-full appearance-none cursor-pointer focus:outline-none [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-3 [&::-webkit-slider-thumb]:h-3 [&::-webkit-slider-thumb]:bg-blue-500 [&::-webkit-slider-thumb]:rounded-full"
+                />
+              </div>
+              <div className="flex items-center gap-2 border-l border-slate-700 pl-4 ml-2">
+                <span className="font-mono text-[11px] text-slate-400 uppercase tracking-wider">Algorithm</span>
+                <select
+                  value={mazeAlgo}
+                  onChange={(e) => setMazeAlgo(e.target.value)}
+                  disabled={isLoading}
+                  className="bg-[#0f1115] text-slate-100 border border-slate-800 rounded px-3 py-1 text-[13px] font-mono focus:outline-none focus:border-blue-500 disabled:opacity-50"
+                >
+                  <option value="bfs">BFS (Breadth-First)</option>
+                  <option value="dfs">DFS (Depth-First)</option>
+                  <option value="dijkstra">Dijkstra's</option>
+                  <option value="astar">A* Search</option>
+                </select>
+              </div>
+            </>
+          )}
+
+          {activeView !== 'telemetry' && (
+            <button
+              onClick={() => handleGenerateArray()}
+              disabled={isLoading}
+              className="px-4 py-1.5 bg-blue-600 hover:bg-blue-500 text-white font-medium rounded text-[13px] shadow-[0_0_12px_rgba(59,130,246,0.4)] active:scale-95 transition-all disabled:opacity-50 flex items-center justify-center gap-2"
+            >
+              {isLoading ? 'Computing...' : 'Generate & Sync Data'}
+            </button>
+          )}
+          
+          {activeView === 'telemetry' && (
+            <button
+              onClick={() => handleGenerateArray()}
+              disabled={isLoading}
+              className="px-4 py-1.5 bg-blue-600 hover:bg-blue-500 text-white font-medium rounded text-[13px] shadow-[0_0_12px_rgba(59,130,246,0.4)] active:scale-95 transition-all disabled:opacity-50 flex items-center justify-center gap-2"
+            >
+              {isLoading ? 'Generating...' : 'Generate Maze'}
+            </button>
+          )}
 
           {activeView === 'trees' && useTreeStore.getState().inputValues.length > 0 && selectedTreeAction !== 'insert' && (
             <button
@@ -226,6 +327,27 @@ export const HeaderControls: React.FC = () => {
               className="px-4 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white font-medium rounded text-[13px] shadow-[0_0_12px_rgba(16,185,129,0.3)] active:scale-95 transition-all disabled:opacity-50 flex items-center justify-center gap-2"
             >
               {isLoading ? 'Computing...' : 'Run on Tree'}
+            </button>
+          )}
+
+          {activeView === 'graphs' && useGraphStore.getState().timeline.length > 0 && (
+            <button
+              onClick={() => runGraphAlgorithm()}
+              disabled={isLoading || !startNodeId || (selectedGraphAlgorithm === 'dijkstra' && !endNodeId)}
+              title={!startNodeId ? "Select a start node first" : selectedGraphAlgorithm === 'dijkstra' && !endNodeId ? "Select an end node for Dijkstra" : ""}
+              className="px-4 py-1.5 bg-purple-600 hover:bg-purple-500 text-white font-medium rounded text-[13px] shadow-[0_0_12px_rgba(147,51,234,0.3)] active:scale-95 transition-all disabled:opacity-50 flex items-center justify-center gap-2"
+            >
+              {isLoading ? 'Running...' : 'Run Algorithm'}
+            </button>
+          )}
+          
+          {activeView === 'telemetry' && useMazeStore.getState().timeline.length > 0 && (
+            <button
+              onClick={() => runPathfinder()}
+              disabled={isLoading}
+              className="px-4 py-1.5 bg-purple-600 hover:bg-purple-500 text-white font-medium rounded text-[13px] shadow-[0_0_12px_rgba(147,51,234,0.3)] active:scale-95 transition-all disabled:opacity-50 flex items-center justify-center gap-2"
+            >
+              {isLoading ? 'Running...' : 'Find Path'}
             </button>
           )}
         </div>

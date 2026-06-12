@@ -12,18 +12,29 @@ import { useTreeStore } from './store/useTreeStore';
 import { useAppStore } from './store/useAppStore';
 import { TreeVisualizer } from './features/trees/components/TreeVisualizer';
 import { useTreePlayback } from './features/trees/hooks/useTreePlayback';
+import { useGraphStore } from './store/useGraphStore';
+import { useGraphPlayback } from './features/graphs/hooks/useGraphPlayback';
+import { GraphVisualizer } from './features/graphs/components/GraphVisualizer';
+import { GraphMetrics } from './features/graphs/components/GraphMetrics';
+import { useMazeStore } from './store/useMazeStore';
+import { useMazePlayback } from './features/mazes/hooks/useMazePlayback';
+import { MazeVisualizer } from './features/mazes/components/MazeVisualizer';
 
 export const App: React.FC = () => {
   const { activeView } = useAppStore();
   const sortStore = useVisualizerStore();
   const treeStore = useTreeStore();
+  const graphStore = useGraphStore();
+  const mazeStore = useMazeStore();
   
   useSortingPlayback();
   useTreePlayback();
+  useGraphPlayback();
+  useMazePlayback();
 
-  const isPlaying = activeView === 'sorting' ? sortStore.isPlaying : treeStore.isPlaying;
-  const isLoading = activeView === 'sorting' ? sortStore.isLoading : treeStore.isLoading;
-  const error = activeView === 'sorting' ? sortStore.error : treeStore.error;
+  const isPlaying = activeView === 'sorting' ? sortStore.isPlaying : (activeView === 'trees' ? treeStore.isPlaying : (activeView === 'graphs' ? graphStore.isPlaying : mazeStore.isPlaying));
+  const isLoading = activeView === 'sorting' ? sortStore.isLoading : (activeView === 'trees' ? treeStore.isLoading : (activeView === 'graphs' ? graphStore.isLoading : mazeStore.isLoading));
+  const error = activeView === 'sorting' ? sortStore.error : (activeView === 'trees' ? treeStore.error : (activeView === 'graphs' ? graphStore.error : mazeStore.error));
 
   // Compute live tree metrics
   const currentTreeStep = treeStore.timeline[treeStore.currentStepIndex];
@@ -209,6 +220,47 @@ export const App: React.FC = () => {
                 </div>
 
                 <ConsoleLayer timeline={treeStore.timeline} currentStepIndex={treeStore.currentStepIndex} />
+              </div>
+            </div>
+          ) : activeView === 'graphs' ? (
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
+              <div className="lg:col-span-2 flex flex-col gap-6">
+                <GraphVisualizer />
+                {graphStore.timeline.length > 0 && <ControlPanel 
+                  isPlaying={graphStore.isPlaying}
+                  setIsPlaying={graphStore.setIsPlaying}
+                  currentStepIndex={graphStore.currentStepIndex}
+                  timelineLength={graphStore.timeline.length}
+                  playbackSpeed={graphStore.playbackSpeed}
+                  setPlaybackSpeed={graphStore.setPlaybackSpeed}
+                  nextStep={graphStore.nextStep}
+                  prevStep={graphStore.prevStep}
+                  resetPlayback={graphStore.resetPlayback}
+                />}
+              </div>
+              <div className="lg:col-span-1 flex flex-col gap-6">
+                <GraphMetrics />
+                <ConsoleLayer timeline={graphStore.timeline} currentStepIndex={graphStore.currentStepIndex} />
+              </div>
+            </div>
+          ) : activeView === 'telemetry' ? (
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
+              <div className="lg:col-span-2 flex flex-col gap-6">
+                <MazeVisualizer />
+                {mazeStore.timeline.length > 0 && <ControlPanel 
+                  isPlaying={mazeStore.isPlaying}
+                  setIsPlaying={mazeStore.setIsPlaying}
+                  currentStepIndex={mazeStore.currentStepIndex}
+                  timelineLength={mazeStore.timeline.length}
+                  playbackSpeed={mazeStore.playbackSpeed}
+                  setPlaybackSpeed={mazeStore.setPlaybackSpeed}
+                  nextStep={mazeStore.nextStep}
+                  prevStep={mazeStore.prevStep}
+                  resetPlayback={mazeStore.resetPlayback}
+                />}
+              </div>
+              <div className="lg:col-span-1 flex flex-col gap-6">
+                <ConsoleLayer timeline={mazeStore.timeline} currentStepIndex={mazeStore.currentStepIndex} />
               </div>
             </div>
           ) : (

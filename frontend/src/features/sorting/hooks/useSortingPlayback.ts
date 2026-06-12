@@ -28,14 +28,24 @@ export const useSortingPlayback = () =>{
 
         // Grab current timeline so we can append to it
         const currentTimeline = useVisualizerStore.getState().timeline;
+        const algorithm = useVisualizerStore.getState().algorithm;
+        const lastStep = currentTimeline[currentTimeline.length - 1];
         const newSteps = [...currentTimeline];
+
+        // For counting sort, carry the auxiliary arrays through the sweep
+        const isCountingSort = algorithm === 'counting-sort';
+        const countingSortFields = isCountingSort ? {
+            sorted_array: lastStep.sorted_array,
+            number_array: lastStep.number_array,
+        } : {};
 
         for(let i = 0; i < totalElements; i++){
             newSteps.push({
-                array: finalArray,
+                array: isCountingSort ? lastStep.array : finalArray,
                 highlighted_indices: Array.from({ length: i + 1 }, (_, index) => index),
                 swapped_indices: [i],
-                action_description: `Verifying sorted array integrity... Index ${i} verified.`
+                action_description: `Verifying sorted array integrity... Index ${i} verified.`,
+                ...countingSortFields
             });
 
             useVisualizerStore.setState({
@@ -48,10 +58,11 @@ export const useSortingPlayback = () =>{
         }
         
         newSteps.push({
-            array: finalArray,
+            array: isCountingSort ? lastStep.array : finalArray,
             highlighted_indices: [],
             swapped_indices: [],
-            action_description: "Array verified successfully. System operational."
+            action_description: "Array verified successfully. System operational.",
+            ...countingSortFields
         });
 
         useVisualizerStore.setState({
@@ -74,7 +85,11 @@ export const useSortingPlayback = () =>{
                 if(isEndOfSorting && !isAlreadyVerified){
                     clearInterval(timerRef.current!);
 
-                    const finalSortedArray = timeline[timeline.length - 1].array;
+                    const lastStep = timeline[timeline.length - 1];
+                    const algorithm = useVisualizerStore.getState().algorithm;
+                    const finalSortedArray = algorithm === 'counting-sort' && lastStep.sorted_array
+                        ? lastStep.sorted_array
+                        : lastStep.array;
 
                     triggerVictorySweep(finalSortedArray);
                     return;

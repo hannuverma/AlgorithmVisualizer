@@ -344,7 +344,6 @@ class SortingEngine:
                 )
             )
 
-        arr = sorted_arr
         timeline.append(
             SortingStep(
                 array=arr.copy(),

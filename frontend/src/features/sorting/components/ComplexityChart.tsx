@@ -30,9 +30,9 @@ export const ComplexityChart: React.FC = () => {
         averageCase = Math.pow(i, 2) * 0.75;
         worstCase = Math.pow(i, 2);
       } else if (algorithm === 'counting-sort') {
-        bestCase = max + i * 2;
-        averageCase = max + i * 2.25;
-        worstCase = max + i * 2.5;
+        bestCase = i + max;                   // O(N + K): one pass to count, one to place
+        averageCase = 2 * i + max;              // O(2N + K): count + prefix sum + placement
+        worstCase = 3 * i + max;                // O(3N + K): all phases with full iteration
       } else {
         // bubble-sort, insertion-sort
         bestCase = i;
