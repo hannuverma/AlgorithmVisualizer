@@ -74,7 +74,7 @@ export const HeaderControls: React.FC = () => {
     return (
       <button 
         onClick={() => setActiveView(view)}
-        className={`${isActive ? 'bg-[#16191f] text-slate-100 shadow-[0_1px_3px_rgba(0,0,0,0.5)] border border-slate-700/50' : 'text-slate-400 hover:text-slate-200'} px-4 py-1.5 text-[13px] font-medium rounded transition-all whitespace-nowrap snap-center shrink-0`}
+        className={`${isActive ? 'bg-[#16191f] text-slate-100 shadow-[0_1px_3px_rgba(0,0,0,0.5)] border border-slate-700/50' : 'text-slate-400 hover:text-slate-200'} px-4 py-1.5 text-[13px] font-medium rounded transition-all`}
       >
         {label}
       </button>
@@ -82,24 +82,23 @@ export const HeaderControls: React.FC = () => {
   };
 
   return (
-    <header className="glass-nav sticky top-0 z-50 border-b border-slate-800/80 shadow-sm lg:min-h-[72px] flex items-center">
-      <div className="max-w-[1400px] w-full mx-auto px-4 sm:px-6 py-3 flex flex-col lg:flex-row items-center justify-between gap-4">
+    <header className="glass-nav sticky top-0 z-50">
+      <div className="max-w-[1400px] mx-auto px-4 sm:px-8 py-2 flex flex-col lg:flex-row items-center justify-between gap-4">
         
         {/* Logo Area */}
-        <div className="flex items-center w-full lg:w-auto justify-between lg:justify-start shrink-0">
-          <div className="font-sans text-base font-semibold tracking-tight flex items-center gap-2 text-slate-100">
+        <div className="flex items-center gap-4 w-full lg:w-auto justify-between lg:justify-start">
+          <div className="font-sans text-base font-semibold tracking-tight flex items-center gap-2">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--color-accent-blue)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
               <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
               <line x1="12" y1="22.08" x2="12" y2="12"></line>
             </svg>
-            <span className="hidden sm:inline">Arch Visualizer Core</span>
-            <span className="sm:hidden">Arch Vis Core</span>
+            Arch Visualizer Core
           </div>
         </div>
 
         {/* Segmented Control Tabs */}
-        <div className="flex w-full lg:w-auto overflow-x-auto scrollbar-hide bg-black/30 border border-slate-800/80 rounded-lg p-1 shrink-0 snap-x flex-nowrap">
+        <div className="hidden lg:flex bg-black/30 border border-slate-800/80 rounded-lg p-1">
           <TabButton label="Sorting Engines" view="sorting" />
           <TabButton label="Network Graphs" view="graphs" />
           <TabButton label="Tree Structures" view="trees" />
@@ -107,10 +106,10 @@ export const HeaderControls: React.FC = () => {
         </div>
 
         {/* Controls Area */}
-        <div className="flex flex-wrap items-center gap-4 lg:gap-6 w-full lg:w-auto justify-start lg:justify-end pb-1 lg:pb-0">
+        <div className="flex flex-wrap items-center gap-4 lg:gap-6 w-full lg:w-auto justify-between lg:justify-end">
           
           {activeView === 'sorting' && (
-            <div className="flex items-center gap-2 shrink-0">
+            <div className="flex items-center gap-2">
               <span className="font-mono text-[11px] text-slate-400 uppercase tracking-wider">Algorithm</span>
               <select
                 value={selectedAlgo}
@@ -133,7 +132,7 @@ export const HeaderControls: React.FC = () => {
 
           {activeView === 'trees' && (
             <>
-              <div className="flex items-center gap-2 shrink-0">
+              <div className="flex items-center gap-2">
                 <span className="font-mono text-[11px] text-slate-400 uppercase tracking-wider">Type</span>
                 <select
                   value={selectedTreeType}
@@ -148,7 +147,7 @@ export const HeaderControls: React.FC = () => {
                 </select>
               </div>
 
-              <div className="flex items-center gap-2 shrink-0">
+              <div className="flex items-center gap-2">
                 <span className="font-mono text-[11px] text-slate-400 uppercase tracking-wider">Action</span>
                 <select
                   value={selectedTreeAction}
@@ -172,7 +171,7 @@ export const HeaderControls: React.FC = () => {
 
           {(activeView === 'sorting' || activeView === 'trees') && (
             <>
-              <div className="flex items-center gap-2 shrink-0">
+              <div className="flex items-center gap-2">
                 <span className="font-mono text-[11px] text-slate-400 uppercase tracking-wider">Mode</span>
                 <select
                   value={inputType}
@@ -186,7 +185,7 @@ export const HeaderControls: React.FC = () => {
               </div>
 
               {inputType === 'random' ? (
-                <div className="flex items-center gap-2 shrink-0">
+                <div className="flex items-center gap-2">
                   <span className="font-mono text-[11px] text-slate-400 uppercase tracking-wider">Size ({arraySize})</span>
                   <input
                     type="range"
@@ -200,7 +199,7 @@ export const HeaderControls: React.FC = () => {
                   />
                 </div>
               ) : (
-                <div className="flex items-center gap-2 relative shrink-0">
+                <div className="flex items-center gap-2 relative">
                   <span className="font-mono text-[11px] text-slate-400 uppercase tracking-wider">Array</span>
                   <input
                     type="text"
@@ -225,7 +224,7 @@ export const HeaderControls: React.FC = () => {
 
           {activeView === 'graphs' && (
             <>
-              <div className="flex items-center gap-2 shrink-0">
+              <div className="flex items-center gap-2">
                 <span className="font-mono text-[11px] text-slate-400 uppercase tracking-wider">Nodes ({numNodes})</span>
                 <input
                   type="range"
@@ -238,7 +237,7 @@ export const HeaderControls: React.FC = () => {
                   className="w-20 h-1 bg-slate-800 rounded-full appearance-none cursor-pointer focus:outline-none [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-3 [&::-webkit-slider-thumb]:h-3 [&::-webkit-slider-thumb]:bg-blue-500 [&::-webkit-slider-thumb]:rounded-full"
                 />
               </div>
-              <div className="flex items-center gap-2 shrink-0">
+              <div className="flex items-center gap-2">
                 <span className="font-mono text-[11px] text-slate-400 uppercase tracking-wider">Density</span>
                 <select
                   value={edgeProbability}
@@ -252,7 +251,7 @@ export const HeaderControls: React.FC = () => {
                 </select>
               </div>
               
-              <div className="flex items-center gap-2 border-l border-slate-700 pl-4 ml-2 shrink-0">
+              <div className="flex items-center gap-2 border-l border-slate-700 pl-4 ml-2">
                 <span className="font-mono text-[11px] text-slate-400 uppercase tracking-wider">Algorithm</span>
                 <select
                   value={selectedGraphAlgorithm}
@@ -270,7 +269,7 @@ export const HeaderControls: React.FC = () => {
 
           {activeView === 'telemetry' && (
             <>
-              <div className="flex items-center gap-2 shrink-0">
+              <div className="flex items-center gap-2">
                 <span className="font-mono text-[11px] text-slate-400 uppercase tracking-wider">Size ({rows}x{cols})</span>
                 <input
                   type="range"
@@ -287,7 +286,7 @@ export const HeaderControls: React.FC = () => {
                   className="w-20 h-1 bg-slate-800 rounded-full appearance-none cursor-pointer focus:outline-none [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-3 [&::-webkit-slider-thumb]:h-3 [&::-webkit-slider-thumb]:bg-blue-500 [&::-webkit-slider-thumb]:rounded-full"
                 />
               </div>
-              <div className="flex items-center gap-2 border-l border-slate-700 pl-4 ml-2 shrink-0">
+              <div className="flex items-center gap-2 border-l border-slate-700 pl-4 ml-2">
                 <span className="font-mono text-[11px] text-slate-400 uppercase tracking-wider">Algorithm</span>
                 <select
                   value={mazeAlgo}
@@ -308,7 +307,7 @@ export const HeaderControls: React.FC = () => {
             <button
               onClick={() => handleGenerateArray()}
               disabled={isLoading}
-              className="px-4 py-1.5 bg-blue-600 hover:bg-blue-500 text-white font-medium rounded text-[13px] shadow-[0_0_12px_rgba(59,130,246,0.4)] active:scale-95 transition-all disabled:opacity-50 flex items-center justify-center gap-2 whitespace-nowrap shrink-0"
+              className="px-4 py-1.5 bg-blue-600 hover:bg-blue-500 text-white font-medium rounded text-[13px] shadow-[0_0_12px_rgba(59,130,246,0.4)] active:scale-95 transition-all disabled:opacity-50 flex items-center justify-center gap-2"
             >
               {isLoading ? 'Computing...' : 'Generate & Sync Data'}
             </button>
@@ -318,7 +317,7 @@ export const HeaderControls: React.FC = () => {
             <button
               onClick={() => handleGenerateArray()}
               disabled={isLoading}
-              className="px-4 py-1.5 bg-blue-600 hover:bg-blue-500 text-white font-medium rounded text-[13px] shadow-[0_0_12px_rgba(59,130,246,0.4)] active:scale-95 transition-all disabled:opacity-50 flex items-center justify-center gap-2 whitespace-nowrap shrink-0"
+              className="px-4 py-1.5 bg-blue-600 hover:bg-blue-500 text-white font-medium rounded text-[13px] shadow-[0_0_12px_rgba(59,130,246,0.4)] active:scale-95 transition-all disabled:opacity-50 flex items-center justify-center gap-2"
             >
               {isLoading ? 'Generating...' : 'Generate Maze'}
             </button>
@@ -328,7 +327,7 @@ export const HeaderControls: React.FC = () => {
             <button
               onClick={handleRunOnCurrentTree}
               disabled={isLoading}
-              className="px-4 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white font-medium rounded text-[13px] shadow-[0_0_12px_rgba(16,185,129,0.3)] active:scale-95 transition-all disabled:opacity-50 flex items-center justify-center gap-2 whitespace-nowrap shrink-0"
+              className="px-4 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white font-medium rounded text-[13px] shadow-[0_0_12px_rgba(16,185,129,0.3)] active:scale-95 transition-all disabled:opacity-50 flex items-center justify-center gap-2"
             >
               {isLoading ? 'Computing...' : 'Run on Tree'}
             </button>
@@ -339,7 +338,7 @@ export const HeaderControls: React.FC = () => {
               onClick={() => runGraphAlgorithm()}
               disabled={isLoading || !startNodeId || (selectedGraphAlgorithm === 'dijkstra' && !endNodeId)}
               title={!startNodeId ? "Select a start node first" : selectedGraphAlgorithm === 'dijkstra' && !endNodeId ? "Select an end node for Dijkstra" : ""}
-              className="px-4 py-1.5 bg-purple-600 hover:bg-purple-500 text-white font-medium rounded text-[13px] shadow-[0_0_12px_rgba(147,51,234,0.3)] active:scale-95 transition-all disabled:opacity-50 flex items-center justify-center gap-2 whitespace-nowrap shrink-0"
+              className="px-4 py-1.5 bg-purple-600 hover:bg-purple-500 text-white font-medium rounded text-[13px] shadow-[0_0_12px_rgba(147,51,234,0.3)] active:scale-95 transition-all disabled:opacity-50 flex items-center justify-center gap-2"
             >
               {isLoading ? 'Running...' : 'Run Algorithm'}
             </button>
@@ -349,7 +348,7 @@ export const HeaderControls: React.FC = () => {
             <button
               onClick={() => runPathfinder()}
               disabled={isLoading}
-              className="px-4 py-1.5 bg-purple-600 hover:bg-purple-500 text-white font-medium rounded text-[13px] shadow-[0_0_12px_rgba(147,51,234,0.3)] active:scale-95 transition-all disabled:opacity-50 flex items-center justify-center gap-2 whitespace-nowrap shrink-0"
+              className="px-4 py-1.5 bg-purple-600 hover:bg-purple-500 text-white font-medium rounded text-[13px] shadow-[0_0_12px_rgba(147,51,234,0.3)] active:scale-95 transition-all disabled:opacity-50 flex items-center justify-center gap-2"
             >
               {isLoading ? 'Running...' : 'Find Path'}
             </button>
