@@ -82,8 +82,8 @@ export const HeaderControls: React.FC = () => {
   };
 
   return (
-    <header className="glass-nav sticky top-0 z-50 border-b border-slate-800/80 shadow-sm">
-      <div className="max-w-[1400px] mx-auto px-4 sm:px-6 py-2 lg:py-0 lg:h-16 flex flex-col lg:flex-row items-center justify-between gap-3 lg:gap-4">
+    <header className="glass-nav sticky top-0 z-50 border-b border-slate-800/80 shadow-sm lg:min-h-[72px] flex items-center">
+      <div className="max-w-[1400px] w-full mx-auto px-4 sm:px-6 py-3 flex flex-col lg:flex-row items-center justify-between gap-4">
         
         {/* Logo Area */}
         <div className="flex items-center w-full lg:w-auto justify-between lg:justify-start shrink-0">
@@ -107,7 +107,7 @@ export const HeaderControls: React.FC = () => {
         </div>
 
         {/* Controls Area */}
-        <div className="flex items-center gap-4 lg:gap-6 w-full lg:w-auto overflow-x-auto scrollbar-hide justify-start lg:justify-end min-w-0 flex-nowrap pb-1 lg:pb-0">
+        <div className="flex flex-wrap items-center gap-4 lg:gap-6 w-full lg:w-auto justify-start lg:justify-end pb-1 lg:pb-0">
           
           {activeView === 'sorting' && (
             <div className="flex items-center gap-2 shrink-0">
