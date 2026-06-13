@@ -169,20 +169,60 @@ export const HeaderControls: React.FC = () => {
             </>
           )}
 
-           <div className="flex items-center gap-2">
-             <span className="font-mono text-[11px] text-slate-400 uppercase tracking-wider">Mode</span>
-             <select
-              value={inputType}
-              onChange={(e) => setInputType(e.target.value as 'random' | 'custom')}
-              disabled={isLoading}
-              className="bg-[#0f1115] text-slate-100 border border-slate-800 rounded px-3 py-1 text-[13px] font-mono focus:outline-none focus:border-blue-500 disabled:opacity-50"
-            >
-              <option value="random">Random</option>
-              <option value="custom">Custom</option>
-            </select>
-          </div>
+          {(activeView === 'sorting' || activeView === 'trees') && (
+            <>
+              <div className="flex items-center gap-2">
+                <span className="font-mono text-[11px] text-slate-400 uppercase tracking-wider">Mode</span>
+                <select
+                  value={inputType}
+                  onChange={(e) => setInputType(e.target.value as 'random' | 'custom')}
+                  disabled={isLoading}
+                  className="bg-[#0f1115] text-slate-100 border border-slate-800 rounded px-3 py-1 text-[13px] font-mono focus:outline-none focus:border-blue-500 disabled:opacity-50"
+                >
+                  <option value="random">Random</option>
+                  <option value="custom">Custom</option>
+                </select>
+              </div>
 
-          {activeView === 'graphs' ? (
+              {inputType === 'random' ? (
+                <div className="flex items-center gap-2">
+                  <span className="font-mono text-[11px] text-slate-400 uppercase tracking-wider">Size ({arraySize})</span>
+                  <input
+                    type="range"
+                    min="5"
+                    max="50"
+                    step="1"
+                    value={arraySize}
+                    onChange={(e) => setArraySize(Number(e.target.value))}
+                    disabled={isLoading}
+                    className="w-20 h-1 bg-slate-800 rounded-full appearance-none cursor-pointer focus:outline-none [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-3 [&::-webkit-slider-thumb]:h-3 [&::-webkit-slider-thumb]:bg-blue-500 [&::-webkit-slider-thumb]:rounded-full"
+                  />
+                </div>
+              ) : (
+                <div className="flex items-center gap-2 relative">
+                  <span className="font-mono text-[11px] text-slate-400 uppercase tracking-wider">Array</span>
+                  <input
+                    type="text"
+                    value={customArrayStr}
+                    onChange={(e) => {
+                      setCustomArrayStr(e.target.value);
+                      setInputError(null);
+                    }}
+                    disabled={isLoading}
+                    placeholder="10, 5, 20"
+                    className={`w-32 bg-[#0f1115] text-slate-100 border ${inputError ? 'border-rose-500' : 'border-slate-800'} rounded px-2 py-1 text-[13px] font-mono focus:outline-none focus:border-blue-500 disabled:opacity-50`}
+                  />
+                  {inputError && (
+                    <span className="absolute -bottom-4 left-10 text-[10px] text-rose-500 font-mono whitespace-nowrap">
+                      {inputError}
+                    </span>
+                  )}
+                </div>
+              )}
+            </>
+          )}
+
+          {activeView === 'graphs' && (
             <>
               <div className="flex items-center gap-2">
                 <span className="font-mono text-[11px] text-slate-400 uppercase tracking-wider">Nodes ({numNodes})</span>
@@ -225,42 +265,6 @@ export const HeaderControls: React.FC = () => {
                 </select>
               </div>
             </>
-          ) : (
-            inputType === 'random' ? (
-              <div className="flex items-center gap-2">
-                <span className="font-mono text-[11px] text-slate-400 uppercase tracking-wider">Size ({arraySize})</span>
-                <input
-                  type="range"
-                  min="5"
-                  max="50"
-                  step="1"
-                  value={arraySize}
-                  onChange={(e) => setArraySize(Number(e.target.value))}
-                  disabled={isLoading}
-                  className="w-20 h-1 bg-slate-800 rounded-full appearance-none cursor-pointer focus:outline-none [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-3 [&::-webkit-slider-thumb]:h-3 [&::-webkit-slider-thumb]:bg-blue-500 [&::-webkit-slider-thumb]:rounded-full"
-                />
-              </div>
-            ) : (
-              <div className="flex items-center gap-2 relative">
-                <span className="font-mono text-[11px] text-slate-400 uppercase tracking-wider">Array</span>
-                <input
-                  type="text"
-                  value={customArrayStr}
-                  onChange={(e) => {
-                    setCustomArrayStr(e.target.value);
-                    setInputError(null);
-                  }}
-                  disabled={isLoading}
-                  placeholder="10, 5, 20"
-                  className={`w-32 bg-[#0f1115] text-slate-100 border ${inputError ? 'border-rose-500' : 'border-slate-800'} rounded px-2 py-1 text-[13px] font-mono focus:outline-none focus:border-blue-500 disabled:opacity-50`}
-                />
-                {inputError && (
-                  <span className="absolute -bottom-4 left-10 text-[10px] text-rose-500 font-mono whitespace-nowrap">
-                    {inputError}
-                  </span>
-                )}
-              </div>
-            )
           )}
 
           {activeView === 'telemetry' && (
