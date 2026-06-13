@@ -53,7 +53,7 @@ export const useVisualizerStore = create<VisualizerState>((set) => ({
 
         try {
 
-            const response = await axios.post(`https://algorithmvisualizer-90xk.onrender.com/api/v1/sorting/${algorithm}`, {
+            const response = await axios.post(`https://algorithmvisualizer-zxqj.onrender.com/api/v1/sorting/${algorithm}`, {
             array: array
             });
         

@@ -62,7 +62,7 @@ export const useTreeStore = create<TreeState>((set) => ({
       if (targetValue !== undefined) payload.target_value = targetValue;
       if (targetId !== undefined) payload.target_id = targetId;
       
-      const response = await axios.post(`https://algorithmvisualizer-90xk.onrender.com/api/v1/tree/${treeType}-${treeAction}`, payload);
+      const response = await axios.post(`https://algorithmvisualizer-zxqj.onrender.com/api/v1/tree/${treeType}-${treeAction}`, payload);
       set({ timeline: response.data.timeline, isLoading: false });
     } catch (err: any) {
       set({ 
