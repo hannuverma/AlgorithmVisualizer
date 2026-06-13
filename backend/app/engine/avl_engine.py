@@ -633,7 +633,8 @@ class AVLEngine:
 
             else:
 
-                if node.id != id_to_find:
+                is_match = (node.id == id_to_find) or id_to_find.endswith("_swapped")
+                if not is_match:
                     node.right = delete_node(node.right, id_to_find, val_to_search)
                     return cls.balance_node(node, timeline, root_container)
                 
