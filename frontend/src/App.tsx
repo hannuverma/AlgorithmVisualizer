@@ -250,7 +250,13 @@ export const App: React.FC = () => {
                 <MazeVisualizer />
                 {mazeStore.timeline.length > 0 && <ControlPanel 
                   isPlaying={mazeStore.isPlaying}
-                  setIsPlaying={mazeStore.setIsPlaying}
+                  setIsPlaying={(play) => {
+                    if (play && mazeStore.currentStepIndex === mazeStore.timeline.length - 1) {
+                      mazeStore.runPathfinder();
+                    } else {
+                      mazeStore.setIsPlaying(play);
+                    }
+                  }}
                   currentStepIndex={mazeStore.currentStepIndex}
                   timelineLength={mazeStore.timeline.length}
                   playbackSpeed={mazeStore.playbackSpeed}
